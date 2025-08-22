@@ -14,10 +14,14 @@ app.get("/websub/youtube", (context) => {
 // 1) 確認リクエスト (GET)
 app.post("/websub/youtube", async (context) => {
 
-    const parseBody = await context.req.json();
-    console.log(parseBody);
+    const body = await context.req.text();
 
-    return context.newResponse('Hello Hono!');
+    // XML本文をそのままログに出す
+    console.log("===== YOUTUBE NOTIFICATION RECEIVED =====");
+    console.log(body);
+    console.log("=========================================");
+
+    return context.newResponse('OK');
 });
 
 
