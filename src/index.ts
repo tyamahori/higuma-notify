@@ -1,4 +1,5 @@
 import { Hono } from 'hono'
+import {XMLParser} from "fast-xml-parser";
 
 const app = new Hono()
 
@@ -15,8 +16,22 @@ app.get("/websub/youtube", (context) => {
 app.post("/websub/youtube", async (context) => {
 
     const body = await context.req.text();
+    const parser = new XMLParser();
+    const xml = parser.parse(body);
+
+    // xmlの構造は https://www.youtube.com/feeds/videos.xml?channel_id=UC_aBYQ3phPsrkSXkpnZeDZw
+
+    // 最新の情報の取得イメージ {
+    //     title: xml.feed.entry[0].title,
+    //     url: `https://www.youtube.com/watch?v=${xml.feed.entry[0]['yt:videoId']}`,
+    //     author: xml.feed.entry[0].author.name,
+    // }
+
     const webhookUrl = context.env.DISCORD_WEBHOOK_URL;
-    const messageContent = `ぼくひぐまちゃんねるが更新されたら通知したいんじゃぁ！ \n xml...`;
+    const messageContent = `新着動画だよ！（暖かみのあるbot）
+    **${xml.feed.entry[0].title}**
+    URL: https://www.youtube.com/watch?v=${xml.feed.entry[0]['yt:videoId']}
+    `;
     const requestBody = {
         content: messageContent
     };
@@ -29,8 +44,6 @@ app.post("/websub/youtube", async (context) => {
             },
             body: JSON.stringify(requestBody)
         });
-
-        console.log(response);
 
         if (response.ok) {
             return context.json({ status: 'success', message: 'Discord通知送信成功' });
