@@ -15,13 +15,31 @@ app.get("/websub/youtube", (context) => {
 app.post("/websub/youtube", async (context) => {
 
     const body = await context.req.text();
+    const webhookUrl = context.env.DISCORD_WEBHOOK_URL;
+    const messageContent = `ぼくひぐまちゃんねるが更新されたら通知したいんじゃぁ！ \n xml...`;
+    const requestBody = {
+        content: messageContent
+    };
 
-    // XML本文をそのままログに出す
-    console.log("===== YOUTUBE NOTIFICATION RECEIVED =====");
-    console.log(body);
-    console.log("=========================================");
+    try {
+        const response = await fetch(webhookUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(requestBody)
+        });
 
-    return context.newResponse('OK');
+        console.log(response);
+
+        if (response.ok) {
+            return context.json({ status: 'success', message: 'Discord通知送信成功' });
+        } else {
+            return context.json({ status: 'fail..', error: 'Discord通知送信失敗' }, 500);
+        }
+    } catch (error) {
+        return context.json({ success: false, error: error.message }, 500);
+    }
 });
 
 
