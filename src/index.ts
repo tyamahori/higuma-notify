@@ -5,10 +5,10 @@ const app = new Hono()
 // 1) 確認リクエスト (GET)
 app.get("/websub/youtube", (context) => {
 
-    const query = context.req.query();
+    const query = context.req.query('hub.challenge') ?? 'empty';
     console.log(query);
 
-    return context.newResponse('Hello Hono!');
+    return context.newResponse(query);
 });
 
 // 1) 確認リクエスト (GET)
