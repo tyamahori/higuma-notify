@@ -4,13 +4,23 @@
   "scripts": {
     "dev": "wrangler dev",
     "deploy": "wrangler deploy --minify",
-    "cf-typegen": "wrangler types --env-interface CloudflareBindings"
+    "cf-typegen": "wrangler types --env-interface CloudflareBindings",
+    "lint": "bun run eslint src/**/*.ts",
+    "lint:fix": "bun run eslint src/**/*.ts --fix",
+    "format": "bun run prettier --write src/**/*.ts",
+    "typecheck": "bun run tsc --noEmit"
   },
   "dependencies": {
     "fast-xml-parser": "^5.2.5",
     "hono": "^4.9.4"
   },
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^8.40.0",
+    "@typescript-eslint/parser": "^8.40.0",
+    "eslint": "^9.34.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.4",
+    "prettier": "^3.6.2",
     "wrangler": "^4.4.0"
   }
 }
