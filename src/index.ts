@@ -1,6 +1,8 @@
 import { Hono } from 'hono';
 import { XMLParser } from 'fast-xml-parser';
+import { youTubeFeedSchema } from './types/youtubeXmlInterface';
 import { YouTubeFeed } from './types/youtubeXmlInterface';
+import { sendDiscordNotification } from './sendNotify';
 
 const app = new Hono();
 
@@ -16,41 +18,23 @@ app.get('/websub/youtube', (context) => {
 app.post('/websub/youtube', async (context) => {
   const body = await context.req.text();
   const parser = new XMLParser();
-  const xml = parser.parse(body) as YouTubeFeed;
-
-  // xmlの構造は https://www.youtube.com/feeds/videos.xml?channel_id=UC_aBYQ3phPsrkSXkpnZeDZw
-
-  // 最新の情報の取得イメージ {
-  //     title: xml.feed.entry[0].title,
-  //     url: `https://www.youtube.com/watch?v=${xml.feed.entry[0]['yt:videoId']}`,
-  //     author: xml.feed.entry[0].author.name,
-  // }
-
-  const webhookUrl = (context.env as { DISCORD_WEBHOOK_URL: string }).DISCORD_WEBHOOK_URL;
-  const messageContent = `新着動画だよ！（暖かみのあるbot）
-    **${xml.feed.entry[0].title}**
-    URL: https://www.youtube.com/watch?v=${xml.feed.entry[0]['yt:videoId']}
-    `;
-  const requestBody = {
-    content: messageContent,
-  };
+  const parsedObject = parser.parse(body);
 
   try {
-    const response = await fetch(webhookUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(requestBody),
-    });
-
-    if (response.ok) {
+    const xml: YouTubeFeed = youTubeFeedSchema.parse(parsedObject);
+    // 検証が成功したため、`xml`はYouTubeFeed型として扱える
+    console.log('XML検証成功:', xml.feed.title);
+    const webhookUrl = (context.env as { DISCORD_WEBHOOK_URL: string }).DISCORD_WEBHOOK_URL;
+    const sendResult = await sendDiscordNotification(webhookUrl, xml);
+    if (sendResult.success) {
       return context.json({ status: 'success', message: 'Discord通知送信成功' });
     } else {
-      return context.json({ status: 'fail..', error: 'Discord通知送信失敗' }, 500);
+      return context.json({ status: 'fail..', error: sendResult.message }, 500);
     }
   } catch (error) {
-    return context.json({ success: false, error: (error as Error).message }, 500);
+    // 検証に失敗した場合、ZodErrorがスローされる
+    console.error('XML検証失敗:', error);
+    return context.json({ status: 'fail..', error: 'XML検証失敗' }, 500);
   }
 });
 
