@@ -25,6 +25,10 @@ jobs:
         # package.jsonで定義されている 'lint' スクリプトを実行します。
         run: bun run lint
 
+      - name: Run Prettier Check # ステップ名：Prettierフォーマットチェックの実行
+        # package.jsonで新しく定義した 'format:check' スクリプトを実行しコードがPrettierのルールに従ってフォーマットされているかを確認します。
+        run: bun run format:check
+
       - name: Run Type Check # ステップ名：型チェックの実行
         # package.jsonで定義されている 'typecheck' スクリプトを実行します。
         run: bun run typecheck
