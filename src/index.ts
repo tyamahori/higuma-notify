@@ -1,5 +1,6 @@
 import { Hono } from 'hono';
 import { XMLParser } from 'fast-xml-parser';
+import { YouTubeFeed } from './types/youtubeXmlInterface';
 
 const app = new Hono();
 
@@ -15,7 +16,7 @@ app.get('/websub/youtube', (context) => {
 app.post('/websub/youtube', async (context) => {
   const body = await context.req.text();
   const parser = new XMLParser();
-  const xml = parser.parse(body);
+  const xml = parser.parse(body) as YouTubeFeed;
 
   // xmlの構造は https://www.youtube.com/feeds/videos.xml?channel_id=UC_aBYQ3phPsrkSXkpnZeDZw
 
