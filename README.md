@@ -13,6 +13,20 @@ npm run deploy
 npm run cf-typegen
 ```
 
+## テスト
+
+テストを実行するには：
+
+```txt
+# すべてのテストを実行
+bun test
+
+# テストを監視モードで実行
+bun test --watch
+
+# テストUIを起動
+bun test --ui
+```
 Pass the `CloudflareBindings` as generics when instantiation `Hono`:
 
 ```ts
