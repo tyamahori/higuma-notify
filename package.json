@@ -1,6 +1,7 @@
 {
   "name": "higuma",
   "type": "module",
+  "license": "MIT",
   "scripts": {
     "dev": "wrangler dev",
     "deploy": "wrangler deploy --minify",
