@@ -11,15 +11,15 @@ jobs:
 
     steps:
       - name: Checkout repository # ステップ名：リポジトリのチェックアウト
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up Node.js # ステップ名：Node.js環境のセットアップ
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: '24.30' # プロジェクトで使用しているNode.jsのバージョンを指定（package.jsonの依存関係より適切と判断）
 
       - name: Install Bun # ステップ名：Bunのインストール
-        uses: oven-sh/setup-bun@v1 # Bunをセットアップする公式アクション
+        uses: oven-sh/setup-bun@v2 # Bunをセットアップする公式アクション
         with:
           bun-version: latest # Bunのバージョンを指定（例: '1.0.0' または 'latest'）
 
