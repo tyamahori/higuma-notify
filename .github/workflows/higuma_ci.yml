@@ -1,0 +1,39 @@
+name: CI Higuma Pipeline # ぼくヒグマチャンネル通知用ボットのCI
+
+on:
+  pull_request:
+    branches:
+      - main # PRのターゲットブランチ
+
+jobs:
+  build_and_test: # ジョブの名前
+    runs-on: ubuntu-latest # ジョブを実行する仮想環境
+
+    steps:
+      - name: Checkout repository # ステップ名：リポジトリのチェックアウト
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js # ステップ名：Node.js環境のセットアップ
+        uses: actions/setup-node@v3
+        with:
+          node-version: '24.30' # プロジェクトで使用しているNode.jsのバージョンを指定（package.jsonの依存関係より適切と判断）
+
+      - name: Install Bun # ステップ名：Bunのインストール
+        uses: oven-sh/setup-bun@v1 # Bunをセットアップする公式アクション
+        with:
+          bun-version: latest # Bunのバージョンを指定（例: '1.0.0' または 'latest'）
+
+      - name: Install dependencies # ステップ名：依存関係のインストール
+        run: bun install # bun installを使用
+
+      - name: Run Linter # ステップ名：Linterの実行
+        # package.jsonで定義されている 'lint' スクリプトを実行します。
+        run: bun run lint
+
+      - name: Run Type Check # ステップ名：型チェックの実行
+        # package.jsonで定義されている 'typecheck' スクリプトを実行します。
+        run: bun run typecheck
+
+      - name: Run Tests # ステップ名：自動テストの実行
+        # package.jsonで定義されている 'test' スクリプトを実行します。
+        run: bun run test
