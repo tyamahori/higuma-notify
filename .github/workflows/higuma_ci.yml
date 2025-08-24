@@ -1,6 +1,9 @@
 name: CI Higuma Pipeline # ぼくヒグマチャンネル通知用ボットのCI
 
 on:
+  push:
+    branches:
+      - main
   pull_request:
     branches:
       - main # PRのターゲットブランチ
