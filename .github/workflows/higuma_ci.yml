@@ -1,0 +1,41 @@
+name: CI Higuma Pipeline # ぼくヒグマチャンネル通知用ボットのCI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main # PRのターゲットブランチ
+
+jobs:
+  build_and_test: # ジョブの名前
+    runs-on: ubuntu-latest # ジョブを実行する仮想環境
+
+    steps:
+      - name: Checkout repository # ステップ名：リポジトリのチェックアウト
+        uses: actions/checkout@v5
+
+      - name: Install Bun # ステップ名：Bunのインストール
+        uses: oven-sh/setup-bun@v2 # Bunをセットアップする公式アクション
+        with:
+          bun-version: latest # Bunのバージョンを指定（例: '1.0.0' または 'latest'）
+
+      - name: Install dependencies # ステップ名：依存関係のインストール
+        run: bun install # bun installを使用
+
+      - name: Run Linter # ステップ名：Linterの実行
+        # package.jsonで定義されている 'lint' スクリプトを実行します。
+        run: bun run lint
+
+      - name: Run Prettier Check # ステップ名：Prettierフォーマットチェックの実行
+        # package.jsonで新しく定義した 'format:check' スクリプトを実行しコードがPrettierのルールに従ってフォーマットされているかを確認します。
+        run: bun run format:check
+
+      - name: Run Type Check # ステップ名：型チェックの実行
+        # package.jsonで定義されている 'typecheck' スクリプトを実行します。
+        run: bun run typecheck
+
+      - name: Run Tests # ステップ名：自動テストの実行
+        # package.jsonで定義されている 'test' スクリプトを実行します。
+        run: bun run test

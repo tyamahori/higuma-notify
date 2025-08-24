@@ -9,6 +9,7 @@
     "lint": "bun run eslint .",
     "lint:fix": "bun run eslint . --fix",
     "format": "bun run prettier --write . --ignore-path .gitignore",
+    "format:check": "bun run prettier --check . --ignore-path .gitignore",
     "typecheck": "bun run tsc --noEmit",
     "test": "vitest",
     "test:run": "vitest run",
