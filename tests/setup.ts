@@ -4,7 +4,7 @@ import { vi } from 'vitest'
 process.env.DISCORD_WEBHOOK_URL = 'https://discord.com/api/webhooks/test/test'
 
 // fetchのグローバルモック
-global.fetch = vi.fn()
+globalThis.fetch = vi.fn()
 
 // テスト用の環境変数を設定
 Object.defineProperty(globalThis, 'DISCORD_WEBHOOK_URL', {
