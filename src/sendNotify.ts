@@ -23,7 +23,7 @@ export const sendDiscordNotification = async (
     if (response.ok) {
       return { success: true };
     } else {
-      return { success: false, message: `HTTP error: ${response.status}` };
+      return { success: false, message: `Discord通知送信失敗, HTTP status: ${response.status}` };
     }
   } catch (error) {
     console.error('Discord通知送信失敗:', error);
