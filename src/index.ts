@@ -1,8 +1,9 @@
 import { Hono } from 'hono';
-import { XMLParser } from 'fast-xml-parser';
-import { youTubeFeedSchema } from './types/youtubeXmlInterface';
 import { YouTubeFeed } from './types/youtubeXmlInterface';
 import { sendDiscordNotification } from './sendNotify';
+import z from 'zod';
+import { FuncResult } from './types/funcResult';
+import { parseYouTubeXml } from './parseXml';
 
 const app = new Hono();
 
@@ -17,24 +18,37 @@ app.get('/websub/youtube', (context) => {
 // 1) 確認リクエスト (GET)
 app.post('/websub/youtube', async (context) => {
   const body = await context.req.text();
-  const parser = new XMLParser();
-  const parsedObject = parser.parse(body);
-
-  try {
-    const xml: YouTubeFeed = youTubeFeedSchema.parse(parsedObject);
-    // 検証が成功したため、`xml`はYouTubeFeed型として扱える
-    console.log('XML検証成功:', xml.feed.title);
-    const webhookUrl = (context.env as { DISCORD_WEBHOOK_URL: string }).DISCORD_WEBHOOK_URL;
-    const sendResult = await sendDiscordNotification(webhookUrl, xml);
-    if (sendResult.success) {
-      return context.json({ status: 'success', message: 'Discord通知送信成功' });
-    } else {
-      return context.json({ status: 'fail..', error: sendResult.message }, 500);
+  const xmlParseResult: FuncResult<YouTubeFeed, z.ZodError | unknown> = parseYouTubeXml(body);
+  let xml: YouTubeFeed | null = null;
+  if (xmlParseResult.success) {
+    console.log('XML検証成功:', xmlParseResult.data.feed.title);
+    xml = xmlParseResult.data;
+  } else {
+    if (xmlParseResult.error && xmlParseResult.error instanceof z.ZodError) {
+      return context.json(
+        {
+          status: 'fail..',
+          error: 'XML検証失敗',
+          details: xmlParseResult.error.issues,
+        },
+        400
+      );
     }
-  } catch (error) {
-    // 検証に失敗した場合、ZodErrorがスローされる
-    console.error('XML検証失敗:', error);
-    return context.json({ status: 'fail..', error: 'XML検証失敗' }, 500);
+    return context.json(
+      {
+        status: 'fail..',
+        error: '予期しないエラーが発生しました',
+      },
+      500
+    );
+  }
+
+  const webhookUrl = (context.env as { DISCORD_WEBHOOK_URL: string }).DISCORD_WEBHOOK_URL;
+  const sendResult = await sendDiscordNotification(webhookUrl, xml);
+  if (sendResult.success) {
+    return context.json({ status: 'success', message: 'Discord通知送信成功' });
+  } else {
+    return context.json({ status: 'fail..', error: sendResult.message }, 500);
   }
 });
 
