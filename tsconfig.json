@@ -5,11 +5,8 @@
     "moduleResolution": "Bundler",
     "strict": true,
     "skipLibCheck": true,
-    "lib": [
-      "ESNext",
-      "DOM"
-    ],
+    "lib": ["ESNext", "DOM"],
     "jsx": "react-jsx",
     "jsxImportSource": "hono/jsx"
-  },
+  }
 }

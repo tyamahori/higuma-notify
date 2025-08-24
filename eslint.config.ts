@@ -7,6 +7,9 @@ import prettierConfig from 'eslint-config-prettier';
 export default [
   js.configs.recommended,
   {
+    ignores: ['node_modules/**', 'dist/**', '.wrangler/**'],
+  },
+  {
     files: ['**/*.ts'],
     languageOptions: {
       parser: typescriptParser,
