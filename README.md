@@ -27,11 +27,6 @@ bun test --watch
 # テストUIを起動
 bun test --ui
 ```
-
-### テスト構成
-
-- **ユニットテスト** (`tests/unit.test.ts`): 個別の機能（XMLパース、メッセージフォーマット）をテスト
-
 Pass the `CloudflareBindings` as generics when instantiation `Hono`:
 
 ```ts
