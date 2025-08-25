@@ -1,100 +1,51 @@
-/**
- * `media:starRating`要素の型
- */
-export interface MediaStarRating {
-  count: number;
-  average: number;
-  min: number;
-  max: number;
-}
+import { z } from 'zod';
 
-/**
- * `media:statistics`要素の型
- */
-export interface MediaStatistics {
-  views: number;
-}
+// xmlの構造は https://www.youtube.com/feeds/videos.xml?channel_id=UC_aBYQ3phPsrkSXkpnZeDZw
 
-/**
- * `media:community`要素の型
- */
-export interface MediaCommunity {
-  'media:starRating': MediaStarRating;
-  'media:statistics': MediaStatistics;
-}
+// 最新の情報の取得イメージ {
+//     title: xml.feed.entry[0].title,
+//     url: `https://www.youtube.com/watch?v=${xml.feed.entry[0]['yt:videoId']}`,
+//     author: xml.feed.entry[0].author.name,
+// }
 
-/**
- * `media:content`要素の型
- */
-export interface MediaContent {
-  url: string;
-  type: string;
-  width: number;
-  height: number;
-}
+export const youTubeFeedSchema = z.object({
+  feed: z.object({
+    link: z.array(z.string()),
+    id: z.string(),
+    'yt:channelId': z.string(),
+    title: z.string(),
+    author: z.object({
+      name: z.string(),
+      uri: z.string().url(),
+    }),
+    published: z.string().datetime({ offset: true }),
+    entry: z.array(
+      z.object({
+        id: z.string(),
+        'yt:videoId': z.string(),
+        'yt:channelId': z.string(),
+        title: z.string(),
+        link: z.string(),
+        author: z.object({
+          name: z.string(),
+          uri: z.string().url(),
+        }),
+        published: z.string().datetime({ offset: true }),
+        updated: z.string().datetime({ offset: true }),
+        'media:group': z.object({
+          'media:title': z.string(),
+          'media:content': z.string(),
+          'media:thumbnail': z.string(),
+          'media:description': z.string(),
+          'media:community': z.object({
+            'media:starRating': z.string(),
+            'media:statistics': z.string(),
+          }),
+        }),
+      })
+    ),
+  }),
+});
 
-/**
- * `media:thumbnail`要素の型
- */
-export interface MediaThumbnail {
-  url: string;
-  width: number;
-  height: number;
-}
-
-/**
- * `media:group`要素の型
- */
-export interface MediaGroup {
-  'media:title': string;
-  'media:content': MediaContent;
-  'media:thumbnail': MediaThumbnail;
-  'media:description': string;
-  'media:community': MediaCommunity;
-}
-
-/**
- * `author`要素の型
- */
-export interface Author {
-  name: string;
-  uri: string;
-}
-
-/**
- * `link`要素の型
- */
-export interface Link {
-  rel: string;
-  href: string;
-}
-
-/**
- * `entry`要素（各動画）の型
- */
-export interface VideoEntry {
-  id: string;
-  'yt:videoId': string;
-  'yt:channelId': string;
-  title: string;
-  link: Link;
-  author: Author;
-  published: string;
-  updated: string;
-  'media:group': MediaGroup;
-}
-
-/**
- * ルート要素である`feed`の型
- */
-export interface YouTubeFeed {
-  feed: {
-    link: Link[];
-    id: string;
-    'yt:channelId': string;
-    title: string;
-    author: Author;
-    published: string;
-    entry: VideoEntry[];
-  };
-}
+// 推論される型
+export type YouTubeFeed = z.infer<typeof youTubeFeedSchema>;
