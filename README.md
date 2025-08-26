@@ -8,21 +8,17 @@ YouTube の新着動画通知を WebSub で受け取り、Discord Webhook に転
 - Cloudflare Workers
 
 ## 機能概要
-
 - WebSub 購読確認エンドポイント（GET）
 - YouTube からの通知受信（POST, Atom/XML 解析）
 - Discord へのメッセージ送信（Webhook）
 
-## 必要要件
-
+## 必要ツール
 - Bun（パッケージマネージャ）
-- Node.js
 - Cloudflare アカウント
 - Wrangler（Cloudflare Workers の CLI）
 - Discord Webhook URL
 
 ## セットアップ
-
 1) 依存関係のインストール
    - `bun install`
 
@@ -68,7 +64,7 @@ YouTube の PubSubHubbub（WebSub）Hub に対し、以下のフォームパラ�
 - hub.lease_seconds: 任意（購読期間）
 
 ```bash
-curl -X POST "$HUB" \
+curl -X POST "https://pubsubhubbub.appspot.com/subscribe" \
   -d "hub.mode=subscribe" \
   -d "hub.topic='feed-url-here'" \
   -d "hub.callback='callback-url-here'" \
