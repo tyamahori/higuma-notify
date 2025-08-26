@@ -30,9 +30,9 @@ YouTube の新着動画通知を WebSub で受け取り、Discord Webhook に転
 
 2. 環境変数の設定
    - ローカル開発用:
-     - プロジェクトルートに`.env.vars.sample` から `.dev.vars` を作成します
-     - `cp .env.vars.sample .env.vars`
-     - `.env.vars` に `DISCORD_WEBHOOK_URL=<あなたの Discord Webhook URL>` を設定してください
+     - プロジェクトルートに`.dev.vars.sample` から `.dev.vars` を作成します
+     - `cp .dev.vars.sample .dev.vars`
+     - `.dev.vars` に `DISCORD_WEBHOOK_URL=<あなたの Discord Webhook URL>` を設定してください
    - 本番/デプロイ用:
      - Cloudflare にシークレット変数として登録
        - `wrangler secret put DISCORD_WEBHOOK_URL`
