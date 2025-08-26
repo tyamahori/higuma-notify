@@ -1,0 +1,16 @@
+# Docker files
+docker-compose.yml
+Dockerfile
+
+# Documentation
+README.md
+CLAUDE.md
+
+# Claude settings
+.claude/
+
+# Other files that should not be formatted
+*.log
+node_modules/
+dist/
+.wrangler/
