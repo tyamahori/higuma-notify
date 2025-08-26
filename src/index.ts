@@ -43,11 +43,13 @@ app.post('/websub/youtube', async (context) => {
   const webhookUrl = (context.env as { DISCORD_WEBHOOK_URL: string }).DISCORD_WEBHOOK_URL;
   const feedData: YouTubeFeed = xmlParseResult.data;
 
-  const sendResult = await sendDiscordNotification(webhookUrl, feedData);
-  if (sendResult.success) {
-    return context.json({ status: 'success', message: 'Discord通知送信成功' });
-  }
-  return context.json({ status: 'fail..', error: sendResult.message }, 500);
+  return await sendDiscordNotification(webhookUrl, feedData)
+    .then(() => {
+      return context.json({ status: 'success', message: 'Discord通知送信成功' });
+    })
+    .catch((error) => {
+      return context.json({ status: 'fail..', error: error.message }, 500);
+    });
 });
 
 export default app;

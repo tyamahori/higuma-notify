@@ -1,10 +1,9 @@
-import { FuncResult } from './types/funcResult';
 import { YouTubeFeed } from './types/youtubeXmlInterface';
 
 export const sendDiscordNotification = async (
   webhookUrl: string,
   xml: YouTubeFeed
-): Promise<FuncResult> => {
+): Promise<void> => {
   const messageContent = `新着動画だよ！（暖かみのあるbot）
     **${xml.feed.entry[0].title}**
     URL: https://www.youtube.com/watch?v=${xml.feed.entry[0]['yt:videoId']}
@@ -21,12 +20,16 @@ export const sendDiscordNotification = async (
       body: JSON.stringify(requestBody),
     });
     if (response.ok) {
-      return { success: true };
+      return;
     } else {
-      return { success: false, message: `Discord通知送信失敗, HTTP status: ${response.status}` };
+      throw new Error({
+        message: `Discord通知送信失敗, HTTP status: ${response.status}`,
+      });
     }
   } catch (error) {
     console.error('Discord通知送信失敗:', error);
-    return { success: false, message: (error as Error).message };
+    throw new Error({
+      message: (error as Error).message,
+    });
   }
 };
