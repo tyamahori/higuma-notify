@@ -39,6 +39,7 @@ YouTube の新着動画通知を WebSub で受け取り、Discord Webhook に転
        - プロンプトに従い値を入力
 
 ## ローカル開発
+- 開発サーバ起動: `bun run dev`
 
 ### Docker での起動方法
 ```bash
