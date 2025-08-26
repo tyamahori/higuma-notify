@@ -40,10 +40,23 @@ YouTube の新着動画通知を WebSub で受け取り、Discord Webhook に転
 
 ## ローカル開発
 
-- 開発サーバ起動: `bun run dev`
-- 主要エンドポイント:
-  - GET `/websub/youtube`（購読確認。hub.challenge をそのまま返します）
-  - POST `/websub/youtube`（YouTube からの通知受信。Discord に送信します）
+### Docker での起動方法
+```bash
+# Docker Compose でサービスを起動
+docker compose up --build
+
+# バックグラウンドで実行する場合
+docker compose up -d --build
+
+# サービスを停止
+docker compose down
+```
+
+Docker で起動した場合、サーバーは `http://localhost:8787` でアクセス可能です。
+
+### 主要エンドポイント
+- GET `/websub/youtube`（購読確認。hub.challenge をそのまま返します）
+- POST `/websub/youtube`（YouTube からの通知受信。Discord に送信します）
 
 ## テスト
 
