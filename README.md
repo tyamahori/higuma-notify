@@ -4,8 +4,9 @@ YouTube の新着動画通知を WebSub で受け取り、Discord Webhook に転
 
 ## 技術スタック
 
-- Hono (v24系)
+- Hono (v4.9系)
 - Bun (v1.2系)
+- Zod (v4.1系)
 - TypeScript
 - Cloudflare Workers
 
@@ -28,16 +29,15 @@ YouTube の新着動画通知を WebSub で受け取り、Discord Webhook に転
    - `bun install`
 
 2. 環境変数の設定
-
-- ローカル開発用:
-  - プロジェクトルートに `.dev.vars` を作成し、以下を設定
-    - `DISCORD_WEBHOOK_URL=<あなたの Discord Webhook URL>`
-  - 例は `.dev.vars.sample` を参照してください
-  - `cp .env.vars.sample .env.vars`
-- 本番/デプロイ用:
-  - Cloudflare にシークレット変数として登録
-    - `wrangler secret put DISCORD_WEBHOOK_URL`
-    - プロンプトに従い値を入力
+   - ローカル開発用:
+     - プロジェクトルートに `.dev.vars` を作成し、以下を設定
+       - `DISCORD_WEBHOOK_URL=<あなたの Discord Webhook URL>`
+     - 例は `.dev.vars.sample` を参照してください
+     - `cp .env.vars.sample .env.vars`
+   - 本番/デプロイ用:
+     - Cloudflare にシークレット変数として登録
+       - `wrangler secret put DISCORD_WEBHOOK_URL`
+       - プロンプトに従い値を入力
 
 ## ローカル開発
 
@@ -71,6 +71,7 @@ YouTube の PubSubHubbub（WebSub）Hub に対し、以下のフォームパラ�
 - hub.secret: 任意（署名用）。現状このプロジェクトでは署名検証を行っていません
 - hub.lease_seconds: 任意（購読期間）
 
+購読するコマンド例
 ```bash
 curl -X POST "https://pubsubhubbub.appspot.com/subscribe" \
   -d "hub.mode=subscribe" \
