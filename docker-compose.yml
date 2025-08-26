@@ -1,0 +1,10 @@
+services:
+  higuma-notify-api:
+    build: .
+    container_name: higuma-notify-api
+    ports:
+      - "8787:8787"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    tty: true
