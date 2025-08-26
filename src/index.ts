@@ -39,10 +39,11 @@ app.post('/websub/youtube', async (context) => {
     );
   }
   console.log('XML検証成功:', xmlParseResult.data.feed.title);
-  const xml: YouTubeFeed = xmlParseResult.data;
 
   const webhookUrl = (context.env as { DISCORD_WEBHOOK_URL: string }).DISCORD_WEBHOOK_URL;
-  const sendResult = await sendDiscordNotification(webhookUrl, xml);
+  const feedData: YouTubeFeed = xmlParseResult.data;
+
+  const sendResult = await sendDiscordNotification(webhookUrl, feedData);
   if (sendResult.success) {
     return context.json({ status: 'success', message: 'Discord通知送信成功' });
   }
