@@ -72,6 +72,7 @@ YouTube の PubSubHubbub（WebSub）Hub に対し、以下のフォームパラ�
 - hub.lease_seconds: 任意（購読期間）
 
 購読するコマンド例
+
 ```bash
 curl -X POST "https://pubsubhubbub.appspot.com/subscribe" \
   -d "hub.mode=subscribe" \
