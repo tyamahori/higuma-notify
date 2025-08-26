@@ -7,4 +7,3 @@ services:
     volumes:
       - .:/app
       - /app/node_modules
-    tty: true
