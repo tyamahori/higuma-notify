@@ -1,28 +1,34 @@
 # Higuma Notify
+
 YouTube の新着動画通知を WebSub で受け取り、Discord Webhook に転送する Cloudflare Workers（Hono + TypeScript）プロジェクトです。
 
 ## 技術スタック
+
 - Hono (v24系)
 - Bun (v1.2系)
 - TypeScript
 - Cloudflare Workers
 
 ## 機能概要
+
 - WebSub 購読確認エンドポイント（GET）
 - YouTube からの通知受信（POST, Atom/XML 解析）
 - Discord へのメッセージ送信（Webhook）
 
 ## 必要ツール
+
 - Bun（パッケージマネージャ）
 - Cloudflare アカウント
 - Wrangler（Cloudflare Workers の CLI）
 - Discord Webhook URL
 
 ## セットアップ
-1) 依存関係のインストール
+
+1. 依存関係のインストール
    - `bun install`
 
-2) 環境変数の設定
+2. 環境変数の設定
+
 - ローカル開発用:
   - プロジェクトルートに `.dev.vars` を作成し、以下を設定
     - `DISCORD_WEBHOOK_URL=<あなたの Discord Webhook URL>`
@@ -41,7 +47,9 @@ YouTube の新着動画通知を WebSub で受け取り、Discord Webhook に転
   - POST `/websub/youtube`（YouTube からの通知受信。Discord に送信します）
 
 ## テスト
+
 テストを実行するには：
+
 ```txt
 # すべてのテストを実行
 bun test
