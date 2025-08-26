@@ -15,15 +15,11 @@ app.get('/websub/youtube', (context) => {
   return context.newResponse(query);
 });
 
-// 1) 確認リクエスト (GET)
+// 2) 投稿リクエスト (POST)
 app.post('/websub/youtube', async (context) => {
   const body = await context.req.text();
   const xmlParseResult: FuncResult<YouTubeFeed, z.ZodError | unknown> = parseYouTubeXml(body);
-  let xml: YouTubeFeed | null = null;
-  if (xmlParseResult.success) {
-    console.log('XML検証成功:', xmlParseResult.data.feed.title);
-    xml = xmlParseResult.data;
-  } else {
+  if (!xmlParseResult.success) {
     if (xmlParseResult.error && xmlParseResult.error instanceof z.ZodError) {
       return context.json(
         {
@@ -42,14 +38,16 @@ app.post('/websub/youtube', async (context) => {
       500
     );
   }
+  console.log('XML検証成功:', xmlParseResult.data.feed.title);
 
   const webhookUrl = (context.env as { DISCORD_WEBHOOK_URL: string }).DISCORD_WEBHOOK_URL;
-  const sendResult = await sendDiscordNotification(webhookUrl, xml);
+  const feedData: YouTubeFeed = xmlParseResult.data;
+
+  const sendResult = await sendDiscordNotification(webhookUrl, feedData);
   if (sendResult.success) {
     return context.json({ status: 'success', message: 'Discord通知送信成功' });
-  } else {
-    return context.json({ status: 'fail..', error: sendResult.message }, 500);
   }
+  return context.json({ status: 'fail..', error: sendResult.message }, 500);
 });
 
 export default app;

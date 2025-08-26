@@ -6,10 +6,9 @@ import z from 'zod';
 export const parseYouTubeXml = (body: string): FuncResult<YouTubeFeed, z.ZodError | unknown> => {
   const parser = new XMLParser();
   const parsedObject = parser.parse(body);
-  let xml: YouTubeFeed;
 
   try {
-    xml = youTubeFeedSchema.parse(parsedObject);
+    const xml: YouTubeFeed = youTubeFeedSchema.parse(parsedObject);
     // 検証が成功したため、`xml`はYouTubeFeed型として扱える
     console.log('XML検証成功:', xml.feed.title);
     return { success: true, data: xml };
