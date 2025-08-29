@@ -1,6 +1,6 @@
 import { Hono } from 'hono';
 import { YouTubeFeed } from './types/youtubeXmlInterface';
-import sendDiscordNotification, { DiscordNotificationError } from './sendDiscordNotification';
+import sendDiscordNotification, { DiscordNotificationError } from './sendNotify';
 import z from 'zod';
 import { FuncResult } from './types/funcResult';
 import { parseYouTubeXml } from './parseXml';
