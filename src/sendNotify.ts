@@ -6,8 +6,8 @@ export const sendDiscordNotification = async (
   xml: YouTubeFeed
 ): Promise<FuncResult> => {
   const messageContent = `新着動画だよ！（暖かみのあるbot）
-    **${xml.feed.entry[0].title}**
-    URL: https://www.youtube.com/watch?v=${xml.feed.entry[0]['yt:videoId']}
+    **${xml.feed.entry.title}**
+    URL: ${xml.feed.entry.link['@_href']}
     `;
   const requestBody = {
     content: messageContent,

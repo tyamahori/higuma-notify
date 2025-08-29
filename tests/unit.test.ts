@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { XMLParser } from 'fast-xml-parser';
-import { youTubeFeedSchema } from '../src/types/youtubeXmlInterface';
 import { sampleXmlString } from './fixtures/sample_xml';
+import { XmlParser } from '../src/youtubeFeedParser';
 
 describe('Unit Tests', () => {
   describe('XML Parser Tests', () => {
@@ -72,13 +72,10 @@ describe('Unit Tests', () => {
   });
   describe('Zod Schema Tests', () => {
     it('should validate sample XML data against YouTubeFeed schema', () => {
-      const parser = new XMLParser();
-      const parsedObject = parser.parse(sampleXmlString);
-
       // Zodで検証
       // youTubeFeedSchema.parseがErrorを返さないことを確認
       expect(() => {
-        youTubeFeedSchema.parse(parsedObject);
+        XmlParser(sampleXmlString);
       }).not.toThrow();
     });
   });
