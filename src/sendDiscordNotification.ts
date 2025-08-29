@@ -1,6 +1,14 @@
 import { YouTubeFeed } from './types/youtubeXmlInterface';
 
-export class DiscordNotificationError extends Error {}
+export class DiscordNotificationError extends Error {
+  constructor(
+    public status: number,
+    public message: string,
+    public description: string
+  ) {
+    super(message);
+  }
+}
 
 const sendDiscordNotification = async (webhookUrl: string, xml: YouTubeFeed): Promise<void> => {
   const messageContent = `新着動画だよ！（暖かみのあるbot）
@@ -21,7 +29,9 @@ const sendDiscordNotification = async (webhookUrl: string, xml: YouTubeFeed): Pr
 
   if (!response.ok) {
     throw new DiscordNotificationError(
-      `Discord通知送信失敗, HTTP status: ${response.status}, message: ${await response.text()}`
+      response.status,
+      'Discord通知送信失敗',
+      await response.text()
     );
   }
 };

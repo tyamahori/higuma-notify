@@ -49,6 +49,9 @@ app.post('/websub/youtube', async (context) => {
     })
     .catch((error: unknown) => {
       if (error instanceof DiscordNotificationError) {
+        console.error(
+          `status: ${error.status}, message: ${error.message}, description: ${error.description}`
+        );
         return context.json({ status: 'fail..', error: error.message }, 500);
       }
       // rethrow exceptional error
