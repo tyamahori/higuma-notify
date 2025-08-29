@@ -1,16 +1,15 @@
 import { FuncResult } from './types/funcResult';
-import { YouTubeFeed } from './types/youtubeXmlInterface';
+import { DiscordContent } from './types/youtubeXmlInterface';
 
 export const sendDiscordNotification = async (
   webhookUrl: string,
-  xml: YouTubeFeed
+  body: DiscordContent
 ): Promise<FuncResult> => {
-  const messageContent = `新着動画だよ！（暖かみのあるbot）
-    **${xml.feed.entry[0].title}**
-    URL: https://www.youtube.com/watch?v=${xml.feed.entry[0]['yt:videoId']}
-    `;
   const requestBody = {
-    content: messageContent,
+    content: `${body.message}
+    **${body.title}**
+    URL: ${body.url}
+    `,
   };
   try {
     const response = await fetch(webhookUrl, {
