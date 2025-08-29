@@ -1,6 +1,6 @@
 import { Hono } from 'hono';
 import { YouTubeFeed } from './types/youtubeXmlInterface';
-import { sendDiscordNotification } from './sendNotify';
+import sendDiscordNotification, { DiscordNotificationError } from './sendDiscordNotification';
 import z from 'zod';
 import { FuncResult } from './types/funcResult';
 import { parseYouTubeXml } from './parseXml';
@@ -47,9 +47,19 @@ app.post('/websub/youtube', async (context) => {
     .then(() => {
       return context.json({ status: 'success', message: 'Discord通知送信成功' });
     })
-    .catch((error) => {
-      return context.json({ status: 'fail..', error: error.message }, 500);
+    .catch((error: unknown) => {
+      if (error instanceof DiscordNotificationError) {
+        return context.json({ status: 'fail..', error: error.message }, 500);
+      }
+      // rethrow exceptional error
+      throw error;
     });
+});
+
+// 999) catch all exceptional errors
+app.onError((error, context) => {
+  console.error(`${error}`);
+  return context.json({ message: 'Internal Server Error', error: error.message }, 500);
 });
 
 export default app;
