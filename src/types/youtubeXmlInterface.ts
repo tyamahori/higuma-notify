@@ -33,3 +33,9 @@ export const youTubeFeedSchema = z.object({
 
 // 推論される型
 export type YouTubeFeed = z.infer<typeof youTubeFeedSchema>;
+
+export type DiscordContent = {
+  message: string;
+  title: string;
+  url: string;
+};

@@ -1,4 +1,4 @@
-import { YouTubeFeed } from './types/youtubeXmlInterface';
+import { DiscordContent } from './types/youtubeXmlInterface';
 
 export class DiscordNotificationError extends Error {
   constructor(
@@ -10,13 +10,15 @@ export class DiscordNotificationError extends Error {
   }
 }
 
-const sendDiscordNotification = async (webhookUrl: string, xml: YouTubeFeed): Promise<void> => {
-  const messageContent = `新着動画だよ！（暖かみのあるbot）
-    **${xml.feed.entry.title}**
-    URL: ${xml.feed.entry.link['@_href']}
-    `;
+export const sendDiscordNotification = async (
+  webhookUrl: string,
+  body: DiscordContent
+): Promise<void> => {
   const requestBody = {
-    content: messageContent,
+    content: `${body.message}
+    **${body.title}**
+    URL: ${body.url}
+    `,
   };
 
   const response = await fetch(webhookUrl, {
