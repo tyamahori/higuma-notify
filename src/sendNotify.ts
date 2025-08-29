@@ -12,8 +12,8 @@ export class DiscordNotificationError extends Error {
 
 const sendDiscordNotification = async (webhookUrl: string, xml: YouTubeFeed): Promise<void> => {
   const messageContent = `新着動画だよ！（暖かみのあるbot）
-    **${xml.feed.entry[0].title}**
-    URL: https://www.youtube.com/watch?v=${xml.feed.entry[0]['yt:videoId']}
+    **${xml.feed.entry.title}**
+    URL: ${xml.feed.entry.link['@_href']}
     `;
   const requestBody = {
     content: messageContent,
