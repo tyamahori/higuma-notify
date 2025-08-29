@@ -1,7 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { XMLParser } from 'fast-xml-parser';
-import { sampleXmlString } from './fixtures/sample_xml';
-import { XmlParser } from '../src/youtubeFeedParser';
+import { youTubeFeedSchema } from '../src/types/youtubeXmlInterface';
 
 describe('Unit Tests', () => {
   describe('XML Parser Tests', () => {
@@ -74,8 +73,39 @@ describe('Unit Tests', () => {
     it('should validate sample XML data against YouTubeFeed schema', () => {
       // Zodで検証
       // youTubeFeedSchema.parseがErrorを返さないことを確認
+      const bodyExample = {
+        feed: {
+          link: [
+            { '@_rel': 'hub', '@_href': 'https://pubsubhubbub.appspot.com' },
+            {
+              '@_rel': 'self',
+              '@_href': 'https://www.youtube.com/xml/feeds/videos.xml?channel_id=CHANNEL_ID',
+            },
+          ],
+          title: 'YouTube video feed',
+          updated: '2015-04-01T19:05:24.552394234+00:00',
+          entry: {
+            id: 'yt:video:VIDEO_ID',
+            'yt:videoId': 'VIDEO_ID',
+            'yt:channelId': 'CHANNEL_ID',
+            title: 'Video title',
+            link: {
+              '@_rel': 'alternate',
+              '@_href': 'http://www.youtube.com/watch?v=VIDEO_ID',
+            },
+            author: {
+              name: 'Channel title',
+              uri: 'http://www.youtube.com/channel/CHANNEL_ID',
+            },
+            published: '2015-03-06T21:40:57+00:00',
+            updated: '2015-03-09T19:05:24.552394234+00:00',
+          },
+          '@_xmlns:yt': 'http://www.youtube.com/xml/schemas/2015',
+          '@_xmlns': 'http://www.w3.org/2005/Atom',
+        },
+      };
       expect(() => {
-        XmlParser(sampleXmlString);
+        youTubeFeedSchema.parse(bodyExample);
       }).not.toThrow();
     });
   });
