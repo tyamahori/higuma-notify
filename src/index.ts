@@ -54,7 +54,6 @@ app.post('/websub/youtube', async (context) => {
         );
         return context.json({ status: 'fail..', error: error.message }, 500);
       }
-      // rethrow exceptional error
       throw error;
     });
 });
