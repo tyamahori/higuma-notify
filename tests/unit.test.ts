@@ -117,11 +117,13 @@ describe('Unit Tests', () => {
       const result = parseYouTubeXml(sampleXmlString);
 
       expect(result.success).toBe(true);
-      if (result.success) {
-        expect(result.data.message).toBe('新着動画だよ！（暖かみのあるbot）');
-        expect(result.data.title).toBe('Video title');
-        expect(result.data.url).toBe('http://www.youtube.com/watch?v=VIDEO_ID');
+
+      if (!('data' in result)) {
+        expect.fail('result.data is undefined: ' + result.message);
       }
+      expect(result.data.message).toBe('新着動画だよ！（暖かみのあるbot）');
+      expect(result.data.title).toBe('Video title');
+      expect(result.data.url).toBe('http://www.youtube.com/watch?v=VIDEO_ID');
     });
 
     it('should handle invalid XML gracefully', () => {
@@ -130,9 +132,10 @@ describe('Unit Tests', () => {
 
       expect(result.success).toBe(false);
       expect(result.message).toBe('XML検証失敗');
-      if (!result.success) {
-        expect(result.error).toBeDefined();
+      if (!('error' in result)) {
+        expect.fail('result.error is undefined: ' + result.message);
       }
+      expect(result.error).toBeDefined();
     });
 
     it('should handle XML parsing errors', () => {
