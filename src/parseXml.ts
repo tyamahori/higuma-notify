@@ -1,17 +1,19 @@
-import { XMLParser } from 'fast-xml-parser';
-import { YouTubeFeed, youTubeFeedSchema } from './types/youtubeXmlInterface';
+import { DiscordContent, YouTubeFeed, youTubeFeedSchema } from './types/youtubeXmlInterface';
 import { FuncResult } from './types/funcResult';
 import z from 'zod';
+import { XmlParser } from './XmlParser';
 
-export const parseYouTubeXml = (body: string): FuncResult<YouTubeFeed, z.ZodError | unknown> => {
-  const parser = new XMLParser();
-  const parsedObject = parser.parse(body);
-
+export const parseYouTubeXml = (body: string): FuncResult<DiscordContent, z.ZodError | unknown> => {
   try {
-    const xml: YouTubeFeed = youTubeFeedSchema.parse(parsedObject);
+    const xml: YouTubeFeed = youTubeFeedSchema.parse(XmlParser(body));
     // 検証が成功したため、`xml`はYouTubeFeed型として扱える
     console.log('XML検証成功:', xml.feed.title);
-    return { success: true, data: xml };
+    const content: DiscordContent = {
+      message: '新着動画だよ！（暖かみのあるbot）',
+      title: xml.feed.entry.title,
+      url: xml.feed.entry.link['@_href'],
+    };
+    return { success: true, data: content };
   } catch (error) {
     // 検証に失敗した場合、ZodErrorがスローされる
     if (error instanceof z.ZodError) {

@@ -1,5 +1,5 @@
 import { Hono } from 'hono';
-import { YouTubeFeed } from './types/youtubeXmlInterface';
+import { DiscordContent } from './types/youtubeXmlInterface';
 import { sendDiscordNotification } from './sendNotify';
 import z from 'zod';
 import { FuncResult } from './types/funcResult';
@@ -18,7 +18,7 @@ app.get('/websub/youtube', (context) => {
 // 2) 投稿リクエスト (POST)
 app.post('/websub/youtube', async (context) => {
   const body = await context.req.text();
-  const xmlParseResult: FuncResult<YouTubeFeed, z.ZodError | unknown> = parseYouTubeXml(body);
+  const xmlParseResult: FuncResult<DiscordContent, z.ZodError | unknown> = parseYouTubeXml(body);
   if (!xmlParseResult.success) {
     if (xmlParseResult.error && xmlParseResult.error instanceof z.ZodError) {
       return context.json(
@@ -38,10 +38,10 @@ app.post('/websub/youtube', async (context) => {
       500
     );
   }
-  console.log('XML検証成功:', xmlParseResult.data.feed.title);
+  console.log('XML検証成功:', xmlParseResult.data.title);
 
   const webhookUrl = (context.env as { DISCORD_WEBHOOK_URL: string }).DISCORD_WEBHOOK_URL;
-  const feedData: YouTubeFeed = xmlParseResult.data;
+  const feedData: DiscordContent = xmlParseResult.data;
 
   const sendResult = await sendDiscordNotification(webhookUrl, feedData);
   if (sendResult.success) {
