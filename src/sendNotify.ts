@@ -7,9 +7,9 @@ export class DiscordNotificationSendError extends Error {
   }
 
   constructor(
-    public status: number,
-    public message: string,
-    public description: string
+    readonly status: number,
+    readonly message: string,
+    readonly description: string
   ) {
     super(message);
   }
