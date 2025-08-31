@@ -1,10 +1,9 @@
 import { Hono } from 'hono';
-import z from 'zod';
 import { inspect } from 'node:util';
-import { DiscordContent } from './types/youtubeXmlInterface';
+import { DiscordNotification } from './types/DiscordNotification';
+import parseYouTubeFeed, { YouTubeFeedParseError } from './parseXml';
 import sendDiscordNotification, { DiscordNotificationError } from './sendNotify';
-import { FuncResult } from './types/funcResult';
-import { parseYouTubeXml } from './parseXml';
+import { YouTubeFeed } from './types/youtubeXmlInterface';
 
 const app = new Hono();
 
@@ -18,33 +17,35 @@ app.get('/websub/youtube', (context) => {
 
 // 2) 投稿リクエスト (POST)
 app.post('/websub/youtube', async (context) => {
-  const body = await context.req.text();
-  const xmlParseResult: FuncResult<DiscordContent, z.ZodError | unknown> = parseYouTubeXml(body);
-  if (!xmlParseResult.success) {
-    if (xmlParseResult.error && xmlParseResult.error instanceof z.ZodError) {
+  // parse YouTube feed from context
+  let youTubeFeed: YouTubeFeed;
+  try {
+    const body = await context.req.text();
+    youTubeFeed = parseYouTubeFeed(body);
+  } catch (error) {
+    if (error instanceof YouTubeFeedParseError) {
       return context.json(
         {
           status: 'fail..',
           error: 'XML検証失敗',
-          details: xmlParseResult.error.issues,
+          details: error.message,
         },
         400
       );
     }
-    return context.json(
-      {
-        status: 'fail..',
-        error: '予期しないエラーが発生しました',
-      },
-      500
-    );
+    throw error;
   }
-  console.log('XML検証成功:', xmlParseResult.data.title);
 
+  // create discord notification from YouTube feed
+  const discordNotification: DiscordNotification = {
+    message: '新着動画だよ！（暖かみのあるbot）',
+    title: youTubeFeed.feed.entry.title,
+    url: youTubeFeed.feed.entry.link['@_href'],
+  };
+
+  // send discord notification
   const webhookUrl = (context.env as { DISCORD_WEBHOOK_URL: string }).DISCORD_WEBHOOK_URL;
-  const feedData: DiscordContent = xmlParseResult.data;
-
-  return await sendDiscordNotification(webhookUrl, feedData)
+  return await sendDiscordNotification(webhookUrl, discordNotification)
     .then(() => {
       return context.json({ status: 'success', message: 'Discord通知送信成功' });
     })
@@ -62,7 +63,7 @@ app.post('/websub/youtube', async (context) => {
 // 999) catch all exceptional errors
 app.onError((error, context) => {
   console.error(`${inspect(error)}`);
-  return context.json({ message: 'Internal Server Error', error: error.message }, 500);
+  return context.json({ message: '予期しないエラー', error: error.message }, 500);
 });
 
 export default app;

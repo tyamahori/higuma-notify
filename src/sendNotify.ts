@@ -1,4 +1,5 @@
-import { DiscordContent } from './types/youtubeXmlInterface';
+// TODO: 'DiscordNotificationSender.ts' にファイル名を改名
+import { DiscordNotification } from './types/DiscordNotification';
 
 export class DiscordNotificationError extends Error {
   static {
@@ -14,14 +15,14 @@ export class DiscordNotificationError extends Error {
   }
 }
 
-export const sendDiscordNotification = async (
+const sendDiscordNotification = async (
   webhookUrl: string,
-  body: DiscordContent
+  discordNotification: DiscordNotification
 ): Promise<void> => {
   const requestBody = {
-    content: `${body.message}
-    **${body.title}**
-    URL: ${body.url}
+    content: `${discordNotification.message}
+    **${discordNotification.title}**
+    URL: ${discordNotification.url}
     `,
   };
 
