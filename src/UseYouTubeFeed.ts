@@ -1,4 +1,3 @@
-// TODO: 'YouTubeFeedParser.ts' にファイル名を改名
 import z from 'zod';
 import { XmlParser } from './XmlParser';
 import { YouTubeFeed } from './types/YouTubeFeed';

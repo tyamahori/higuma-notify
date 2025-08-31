@@ -1,8 +1,8 @@
 import { Context } from 'hono';
 import { DiscordNotification } from './types/DiscordNotification';
+import { useDiscordNortification, DiscordNotificationSendError } from './UseDiscordNotification';
 import { YouTubeFeed } from './types/YouTubeFeed';
 import { useYouTubeFeed, YouTubeFeedParseError } from './UseYouTubeFeed';
-import { useDiscordNortification, DiscordNotificationSendError } from './UseDiscordNotification';
 
 export const useHomareHandler = () => {
   // Result type for parsing YouTube feed

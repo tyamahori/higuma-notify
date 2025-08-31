@@ -1,4 +1,3 @@
-// TODO: 'DiscordNotificationSender.ts' にファイル名を改名
 import { DiscordNotification } from './types/DiscordNotification';
 import { YouTubeFeed } from './types/YouTubeFeed';
 
@@ -52,6 +51,7 @@ export const useDiscordNortification = () => {
       );
     }
   };
+
   return { createDiscordNotification, sendDiscordNotification };
 };
 
