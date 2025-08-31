@@ -4,12 +4,12 @@ import { XmlParser } from './XmlParser';
 import { YouTubeFeed, youTubeFeedSchema } from './types/youtubeXmlInterface';
 import { GenericResponseDict } from './types/GenericResponseDict';
 
-export type YouTubeFeedParseSuccessResponse = Pick<GenericResponseDict, 'isSuccess' | 'message'> & {
+export type YouTubeFeedParseSuccessResponse = Pick<GenericResponseDict, 'message'> & {
   isSuccess: true;
   data: YouTubeFeed;
 };
 
-export type YouTubeFeedParseErrorResponse = Pick<GenericResponseDict, 'isSuccess' | 'message'> & {
+export type YouTubeFeedParseErrorResponse = Pick<GenericResponseDict, 'message'> & {
   isSuccess: false;
   error: z.ZodError;
 };

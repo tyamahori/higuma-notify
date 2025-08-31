@@ -2,12 +2,7 @@ import { Hono, Context } from 'hono';
 import { inspect } from 'node:util';
 import { DiscordNotification } from './types/DiscordNotification';
 import { YouTubeFeed } from './types/youtubeXmlInterface';
-import {
-  parseYouTubeFeed,
-  YouTubeFeedParseResponse,
-  YouTubeFeedParseSuccessResponse,
-  YouTubeFeedParseErrorResponse,
-} from './parseXml';
+import { parseYouTubeFeed, YouTubeFeedParseResponse } from './parseXml';
 import { sendDiscordNotification, DiscordNotificationSendError } from './sendNotify';
 
 const app = new Hono();
@@ -26,20 +21,18 @@ app.post('/websub/youtube', async (context: Context) => {
   const contextBody: string = await context.req.text();
   const youTubeFeedParseResponse: YouTubeFeedParseResponse = parseYouTubeFeed(contextBody);
   if (!youTubeFeedParseResponse.isSuccess) {
-    const youTubeFeedParseErrorResponse: YouTubeFeedParseErrorResponse = youTubeFeedParseResponse;
     return context.json(
       {
         status: 'fail..',
-        error: youTubeFeedParseErrorResponse.message,
-        details: youTubeFeedParseErrorResponse.error.issues,
+        error: youTubeFeedParseResponse.message,
+        details: youTubeFeedParseResponse.error.issues,
       },
       400
     );
   }
 
   // create discord notification from YouTube feed
-  const youTubeFeedParseSuccessResponse: YouTubeFeedParseSuccessResponse = youTubeFeedParseResponse;
-  const youTubeFeed: YouTubeFeed = youTubeFeedParseSuccessResponse.data;
+  const youTubeFeed: YouTubeFeed = youTubeFeedParseResponse.data;
   const discordNotification: DiscordNotification = {
     message: '新着動画だよ！（暖かみのあるbot）',
     title: youTubeFeed.feed.entry.title,
