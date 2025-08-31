@@ -1,5 +1,5 @@
 import z from 'zod';
-import { XmlParser } from './XmlParser';
+import { XMLParser } from 'fast-xml-parser';
 import { YouTubeFeed } from './types/YouTubeFeed';
 import { youTubeFeedSchema } from './schema/YouTubeFeedSchema';
 
@@ -10,9 +10,22 @@ export class YouTubeFeedParseError extends Error {
 }
 
 export const useYouTubeFeed = () => {
-  const parseYouTubeFeed = (body: string): YouTubeFeed => {
+  const parseXml = (contextBody: string) => {
     try {
-      const youTubeFeed: YouTubeFeed = youTubeFeedSchema.parse(XmlParser(body));
+      const xmlParser: XMLParser = new XMLParser({
+        ignoreAttributes: false,
+      });
+      return xmlParser.parse(contextBody);
+    } catch (error: unknown) {
+      console.error('パース失敗:', (error as Error).message);
+      throw new YouTubeFeedParseError('パース失敗', { cause: error });
+    }
+  };
+
+  const parseYouTubeFeed = (contextBody: string): YouTubeFeed => {
+    const parsedXml = parseXml(contextBody);
+    try {
+      const youTubeFeed: YouTubeFeed = youTubeFeedSchema.parse(parsedXml);
       // 検証が成功したため、`xml`はYouTubeFeed型として扱える
       console.log('XML検証成功:', youTubeFeed.feed.title);
       return youTubeFeed;
