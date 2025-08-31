@@ -127,7 +127,7 @@ describe('Unit Tests', () => {
 
     it('should handle XML parsing errors', () => {
       const unparsableXml = 'not xml at all';
-      expect(parseYouTubeFeed(unparsableXml)).toThrow('予期しないエラー');
+      expect(parseYouTubeFeed(unparsableXml)).toThrow('XML検証失敗');
     });
   });
 });
