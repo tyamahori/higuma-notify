@@ -8,12 +8,12 @@ import { sendDiscordNotification, DiscordNotificationSendError } from './sendNot
 const app = new Hono();
 
 // Result type for parsing YouTube feed
-type ParseResult =
+type YouTubeFeedParseResult =
   | { success: true; data: YouTubeFeed }
   | { success: false; error: YouTubeFeedParseError };
 
 // Safe parsing function that returns Result type
-function tryParseYouTubeFeed(contextBody: string): ParseResult {
+function tryParseYouTubeFeed(contextBody: string): YouTubeFeedParseResult {
   try {
     return { success: true, data: parseYouTubeFeed(contextBody) };
   } catch (error) {
@@ -37,18 +37,16 @@ app.get('/websub/youtube', (context: Context) => {
 app.post('/websub/youtube', async (context: Context) => {
   // parse YouTube feed from context using Result pattern
   const contextBody: string = await context.req.text();
-  const parseResult = tryParseYouTubeFeed(contextBody);
-
-  if (!parseResult.success) {
+  const youTubeFeedParseResult: YouTubeFeedParseResult = tryParseYouTubeFeed(contextBody);
+  if (!youTubeFeedParseResult.success) {
     return context.json(
-      { status: 'fail..', error: 'XML検証失敗', details: parseResult.error.message },
+      { status: 'fail..', error: 'XML検証失敗', details: youTubeFeedParseResult.error.message },
       400
     );
   }
 
-  const youTubeFeed = parseResult.data;
-
   // create discord notification from YouTube feed
+  const youTubeFeed: YouTubeFeed = youTubeFeedParseResult.data;
   const discordNotification: DiscordNotification = {
     message: '新着動画だよ！（暖かみのあるbot）',
     title: youTubeFeed.feed.entry.title,
