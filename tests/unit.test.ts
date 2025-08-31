@@ -121,12 +121,12 @@ describe('Unit Tests', () => {
 
     it('should handle invalid XML gracefully', () => {
       const invalidXml = '<invalid>xml</invalid>';
-      expect(parseYouTubeFeed(invalidXml)).toThrow('XML検証失敗');
+      expect(() => parseYouTubeFeed(invalidXml)).toThrow('XML検証失敗');
     });
 
     it('should handle XML parsing errors', () => {
       const unparsableXml = 'not xml at all';
-      expect(parseYouTubeFeed(unparsableXml)).toThrow('XML検証失敗');
+      expect(() => parseYouTubeFeed(unparsableXml)).toThrow('XML検証失敗');
     });
   });
 });
