@@ -2,10 +2,11 @@ import { Hono, Context } from 'hono';
 import { inspect } from 'node:util';
 import { DiscordNotification } from './types/DiscordNotification';
 import { YouTubeFeed } from './types/youtubeXmlInterface';
+import { Bindings } from './types/Bindings';
 import { parseYouTubeFeed, YouTubeFeedParseError } from './parseXml';
 import { sendDiscordNotification, DiscordNotificationSendError } from './sendNotify';
 
-const app = new Hono();
+const app = new Hono<{ Bindings: Bindings }>();
 
 // Result type for parsing YouTube feed
 type YouTubeFeedParseResult =
@@ -54,7 +55,7 @@ app.post('/websub/youtube', async (context: Context) => {
   };
 
   // send discord notification
-  const webhookUrl: string = (context.env as { DISCORD_WEBHOOK_URL: string }).DISCORD_WEBHOOK_URL;
+  const webhookUrl: string = context.env.DISCORD_WEBHOOK_URL;
   return await sendDiscordNotification(webhookUrl, discordNotification)
     .then(() => {
       return context.json({ status: 'success', message: 'Discord通知送信成功' });
