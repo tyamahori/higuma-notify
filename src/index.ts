@@ -1,7 +1,8 @@
 import { Hono } from 'hono';
+import z from 'zod';
+import { inspect } from 'node:util';
 import { DiscordContent } from './types/youtubeXmlInterface';
 import sendDiscordNotification, { DiscordNotificationError } from './sendNotify';
-import z from 'zod';
 import { FuncResult } from './types/funcResult';
 import { parseYouTubeXml } from './parseXml';
 
@@ -60,7 +61,7 @@ app.post('/websub/youtube', async (context) => {
 
 // 999) catch all exceptional errors
 app.onError((error, context) => {
-  console.error(`${error}`);
+  console.error(`${inspect(error)}`);
   return context.json({ message: 'Internal Server Error', error: error.message }, 500);
 });
 
