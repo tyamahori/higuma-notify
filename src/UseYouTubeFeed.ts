@@ -12,10 +12,9 @@ export class YouTubeFeedParseError extends Error {
 export const useYouTubeFeed = () => {
   const parseXml = (contextBody: string) => {
     try {
-      const xmlParser: XMLParser = new XMLParser({
+      return new XMLParser({
         ignoreAttributes: false,
-      });
-      return xmlParser.parse(contextBody);
+      }).parse(contextBody);
     } catch (error: unknown) {
       console.error('パース失敗:', (error as Error).message);
       throw new YouTubeFeedParseError('パース失敗', { cause: error });
