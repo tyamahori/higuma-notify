@@ -1,9 +1,9 @@
 // TODO: 'DiscordNotificationSender.ts' にファイル名を改名
 import { DiscordNotification } from './types/DiscordNotification';
 
-export class DiscordNotificationError extends Error {
+export class DiscordNotificationSendError extends Error {
   static {
-    this.prototype.name = 'DiscordNotificationError';
+    this.prototype.name = 'DiscordNotificationSendError';
   }
 
   constructor(
@@ -35,7 +35,7 @@ const sendDiscordNotification = async (
   });
 
   if (!response.ok) {
-    throw new DiscordNotificationError(
+    throw new DiscordNotificationSendError(
       response.status,
       'Discord通知送信失敗',
       await response.text()

@@ -3,7 +3,7 @@ import { inspect } from 'node:util';
 import { DiscordNotification } from './types/DiscordNotification';
 import { YouTubeFeed } from './types/youtubeXmlInterface';
 import parseYouTubeFeed, { YouTubeFeedParseError } from './parseXml';
-import sendDiscordNotification, { DiscordNotificationError } from './sendNotify';
+import sendDiscordNotification, { DiscordNotificationSendError } from './sendNotify';
 
 const app = new Hono();
 
@@ -50,7 +50,7 @@ app.post('/websub/youtube', async (context) => {
       return context.json({ status: 'success', message: 'Discord通知送信成功' });
     })
     .catch((error: unknown) => {
-      if (error instanceof DiscordNotificationError) {
+      if (error instanceof DiscordNotificationSendError) {
         console.error(
           `status: ${error.status}, message: ${error.message}, description: ${error.description}`
         );
