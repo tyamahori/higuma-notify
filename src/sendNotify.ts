@@ -1,31 +1,44 @@
-import { FuncResult } from './types/funcResult';
 import { DiscordContent } from './types/youtubeXmlInterface';
+
+export class DiscordNotificationError extends Error {
+  static {
+    this.prototype.name = 'DiscordNotificationError';
+  }
+
+  constructor(
+    public status: number,
+    public message: string,
+    public description: string
+  ) {
+    super(message);
+  }
+}
 
 export const sendDiscordNotification = async (
   webhookUrl: string,
   body: DiscordContent
-): Promise<FuncResult> => {
+): Promise<void> => {
   const requestBody = {
     content: `${body.message}
     **${body.title}**
     URL: ${body.url}
     `,
   };
-  try {
-    const response = await fetch(webhookUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(requestBody),
-    });
-    if (response.ok) {
-      return { success: true };
-    } else {
-      return { success: false, message: `Discord通知送信失敗, HTTP status: ${response.status}` };
-    }
-  } catch (error) {
-    console.error('Discord通知送信失敗:', error);
-    return { success: false, message: (error as Error).message };
+
+  const response = await fetch(webhookUrl, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(requestBody),
+  });
+
+  if (!response.ok) {
+    throw new DiscordNotificationError(
+      response.status,
+      'Discord通知送信失敗',
+      await response.text()
+    );
   }
 };
+export default sendDiscordNotification;

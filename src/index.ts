@@ -1,7 +1,8 @@
 import { Hono } from 'hono';
-import { DiscordContent } from './types/youtubeXmlInterface';
-import { sendDiscordNotification } from './sendNotify';
 import z from 'zod';
+import { inspect } from 'node:util';
+import { DiscordContent } from './types/youtubeXmlInterface';
+import sendDiscordNotification, { DiscordNotificationError } from './sendNotify';
 import { FuncResult } from './types/funcResult';
 import { parseYouTubeXml } from './parseXml';
 
@@ -43,11 +44,25 @@ app.post('/websub/youtube', async (context) => {
   const webhookUrl = (context.env as { DISCORD_WEBHOOK_URL: string }).DISCORD_WEBHOOK_URL;
   const feedData: DiscordContent = xmlParseResult.data;
 
-  const sendResult = await sendDiscordNotification(webhookUrl, feedData);
-  if (sendResult.success) {
-    return context.json({ status: 'success', message: 'Discord通知送信成功' });
-  }
-  return context.json({ status: 'fail..', error: sendResult.message }, 500);
+  return await sendDiscordNotification(webhookUrl, feedData)
+    .then(() => {
+      return context.json({ status: 'success', message: 'Discord通知送信成功' });
+    })
+    .catch((error: unknown) => {
+      if (error instanceof DiscordNotificationError) {
+        console.error(
+          `status: ${error.status}, message: ${error.message}, description: ${error.description}`
+        );
+        return context.json({ status: 'fail..', error: error.message }, 500);
+      }
+      throw error;
+    });
+});
+
+// 999) catch all exceptional errors
+app.onError((error, context) => {
+  console.error(`${inspect(error)}`);
+  return context.json({ message: 'Internal Server Error', error: error.message }, 500);
 });
 
 export default app;
