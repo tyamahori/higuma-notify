@@ -10,6 +10,24 @@ export const useHomareHandler = () => {
     | { success: true; data: YouTubeFeed }
     | { success: false; error: YouTubeFeedParseError };
 
+  // Safe parsing function that returns Result type
+  const tryParseYouTubeFeed = (contextBody: string): YouTubeFeedParseResult => {
+    try {
+      return { success: true, data: parseYouTubeFeed(contextBody) };
+    } catch (error) {
+      if (error instanceof YouTubeFeedParseError) {
+        return { success: false, error };
+      }
+      console.error(
+        `method: tryParseYouTubeFeed message: 類例をみないエラーが発生しました ${error}`
+      );
+      throw error;
+    }
+  };
+
+  /**
+   * 闘う顔してますか？
+   */
   const battleFaceOk = (context: Context) => {
     const query: string = context.req.query('hub.challenge') ?? 'empty';
     console.log(query);
@@ -17,6 +35,9 @@ export const useHomareHandler = () => {
     return context.newResponse(query);
   };
 
+  /**
+   * 痺れますね！
+   */
   const postShibireMasuNeNotification = async (context: Context) => {
     // parse YouTube feed from context using Result pattern
     const contextBody: string = await context.req.text();
@@ -54,21 +75,6 @@ export const useHomareHandler = () => {
         );
         throw error;
       });
-  };
-
-  // Safe parsing function that returns Result type
-  const tryParseYouTubeFeed = (contextBody: string): YouTubeFeedParseResult => {
-    try {
-      return { success: true, data: parseYouTubeFeed(contextBody) };
-    } catch (error) {
-      if (error instanceof YouTubeFeedParseError) {
-        return { success: false, error };
-      }
-      console.error(
-        `method: tryParseYouTubeFeed message: 類例をみないエラーが発生しました ${error}`
-      );
-      throw error;
-    }
   };
 
   return { battleFaceOk, postShibireMasuNeNotification };
