@@ -1,6 +1,6 @@
 // TODO: 'DiscordNotificationSender.ts' にファイル名を改名
 import { DiscordNotification } from './types/DiscordNotification';
-import { YouTubeFeed } from './types/youtubeXmlInterface';
+import { YouTubeFeed } from './types/YouTubeFeed';
 
 export class DiscordNotificationSendError extends Error {
   static {

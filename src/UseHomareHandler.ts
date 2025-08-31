@@ -1,6 +1,6 @@
 import { Context } from 'hono';
 import { DiscordNotification } from './types/DiscordNotification';
-import { YouTubeFeed } from './types/youtubeXmlInterface';
+import { YouTubeFeed } from './types/YouTubeFeed';
 import { useYouTubeFeed, YouTubeFeedParseError } from './UseYouTubeFeed';
 import { useDiscordNortification, DiscordNotificationSendError } from './UseDiscordNotification';
 

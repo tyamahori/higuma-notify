@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { XMLParser } from 'fast-xml-parser';
-import { youTubeFeedSchema } from '../src/types/youtubeXmlInterface';
+import { youTubeFeedSchema } from '../src/schema/YouTubeFeedSchema';
 import { useYouTubeFeed } from '../src/UseYouTubeFeed';
 import { sampleXmlString } from './fixtures/sample_xml';
 

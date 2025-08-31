@@ -1,7 +1,8 @@
 // TODO: 'YouTubeFeedParser.ts' にファイル名を改名
 import z from 'zod';
 import { XmlParser } from './XmlParser';
-import { YouTubeFeed, youTubeFeedSchema } from './types/youtubeXmlInterface';
+import { YouTubeFeed } from './types/YouTubeFeed';
+import { youTubeFeedSchema } from './schema/YouTubeFeedSchema';
 
 export class YouTubeFeedParseError extends Error {
   static {
