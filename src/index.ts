@@ -1,4 +1,4 @@
-import { Hono } from 'hono';
+import { Hono, Context } from 'hono';
 import { inspect } from 'node:util';
 import { DiscordNotification } from './types/DiscordNotification';
 import { YouTubeFeed } from './types/youtubeXmlInterface';
@@ -8,30 +8,23 @@ import { sendDiscordNotification, DiscordNotificationSendError } from './sendNot
 const app = new Hono();
 
 // 1) 確認リクエスト (GET)
-app.get('/websub/youtube', (context) => {
-  const query = context.req.query('hub.challenge') ?? 'empty';
+app.get('/websub/youtube', (context: Context) => {
+  const query: string = context.req.query('hub.challenge') ?? 'empty';
   console.log(query);
 
   return context.newResponse(query);
 });
 
 // 2) 投稿リクエスト (POST)
-app.post('/websub/youtube', async (context) => {
+app.post('/websub/youtube', async (context: Context) => {
   // parse YouTube feed from context
   let youTubeFeed: YouTubeFeed;
   try {
-    const body = await context.req.text();
-    youTubeFeed = parseYouTubeFeed(body);
-  } catch (error) {
+    const contextBody: string = await context.req.text();
+    youTubeFeed = parseYouTubeFeed(contextBody);
+  } catch (error: unknown) {
     if (error instanceof YouTubeFeedParseError) {
-      return context.json(
-        {
-          status: 'fail..',
-          error: 'XML検証失敗',
-          details: error.message,
-        },
-        400
-      );
+      return context.json({ status: 'fail..', error: 'XML検証失敗', details: error.message }, 400);
     }
     throw error;
   }
@@ -44,7 +37,7 @@ app.post('/websub/youtube', async (context) => {
   };
 
   // send discord notification
-  const webhookUrl = (context.env as { DISCORD_WEBHOOK_URL: string }).DISCORD_WEBHOOK_URL;
+  const webhookUrl: string = (context.env as { DISCORD_WEBHOOK_URL: string }).DISCORD_WEBHOOK_URL;
   return await sendDiscordNotification(webhookUrl, discordNotification)
     .then(() => {
       return context.json({ status: 'success', message: 'Discord通知送信成功' });
@@ -61,7 +54,7 @@ app.post('/websub/youtube', async (context) => {
 });
 
 // 999) catch all exceptional errors
-app.onError((error, context) => {
+app.onError((error: Error, context: Context) => {
   console.error(`${inspect(error)}`);
   return context.json({ message: '予期しないエラー', error: error.message }, 500);
 });

@@ -1,7 +1,7 @@
 import { XMLParser } from 'fast-xml-parser';
 
 export const XmlParser = (body: string) => {
-  const parser = new XMLParser({
+  const parser: XMLParser = new XMLParser({
     ignoreAttributes: false,
   });
 

@@ -26,7 +26,7 @@ export const sendDiscordNotification = async (
     `,
   };
 
-  const response = await fetch(webhookUrl, {
+  const response: Response = await fetch(webhookUrl, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

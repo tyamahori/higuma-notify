@@ -15,7 +15,7 @@ export const parseYouTubeFeed = (body: string): YouTubeFeed => {
     // 検証が成功したため、`xml`はYouTubeFeed型として扱える
     console.log('XML検証成功:', youTubeFeed.feed.title);
     return youTubeFeed;
-  } catch (error) {
+  } catch (error: unknown) {
     // 検証に失敗した場合、ZodErrorがスローされる
     if (error instanceof z.ZodError) {
       console.error('XML検証失敗:', error.issues);
