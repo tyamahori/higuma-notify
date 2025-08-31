@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { XMLParser } from 'fast-xml-parser';
 import { youTubeFeedSchema } from '../src/types/youtubeXmlInterface';
-import { parseYouTubeFeed } from '../src/parseXml';
+import { useYouTubeFeed } from '../src/UseYouTubeFeed';
 import { sampleXmlString } from './fixtures/sample_xml';
 
 describe('Unit Tests', () => {
@@ -114,6 +114,7 @@ describe('Unit Tests', () => {
 
   describe('XML Parse Integration Tests', () => {
     it('should parse real YouTube WebSub XML and return DiscordContent', () => {
+      const { parseYouTubeFeed } = useYouTubeFeed();
       const result = parseYouTubeFeed(sampleXmlString);
       expect(result.feed.entry.title).toBe('Video title');
       expect(result.feed.entry.link['@_href']).toBe('http://www.youtube.com/watch?v=VIDEO_ID');
@@ -121,11 +122,13 @@ describe('Unit Tests', () => {
 
     it('should handle invalid XML gracefully', () => {
       const invalidXml = '<invalid>xml</invalid>';
+      const { parseYouTubeFeed } = useYouTubeFeed();
       expect(() => parseYouTubeFeed(invalidXml)).toThrow('XML検証失敗');
     });
 
     it('should handle XML parsing errors', () => {
       const unparsableXml = 'not xml at all';
+      const { parseYouTubeFeed } = useYouTubeFeed();
       expect(() => parseYouTubeFeed(unparsableXml)).toThrow('XML検証失敗');
     });
   });
