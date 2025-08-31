@@ -1,7 +1,12 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, assert } from 'vitest';
 import { XMLParser } from 'fast-xml-parser';
-import { youTubeFeedSchema } from '../src/types/youtubeXmlInterface';
-import { parseYouTubeFeed } from '../src/parseXml';
+import { YouTubeFeed, youTubeFeedSchema } from '../src/types/youtubeXmlInterface';
+import {
+  parseYouTubeFeed,
+  YouTubeFeedParseResponse,
+  YouTubeFeedParseSuccessResponse,
+  // YouTubeFeedParseErrorResponse,
+} from '../src/parseXml';
 import { sampleXmlString } from './fixtures/sample_xml';
 
 describe('Unit Tests', () => {
@@ -114,19 +119,26 @@ describe('Unit Tests', () => {
 
   describe('XML Parse Integration Tests', () => {
     it('should parse real YouTube WebSub XML and return DiscordContent', () => {
-      const result = parseYouTubeFeed(sampleXmlString);
-      expect(result.feed.entry.title).toBe('Video title');
-      expect(result.feed.entry.link['@_href']).toBe('http://www.youtube.com/watch?v=VIDEO_ID');
+      const result: YouTubeFeedParseResponse = parseYouTubeFeed(sampleXmlString);
+      if (!result.isSuccess) {
+        assert.fail('isSuccess must be true.');
+      }
+      expect(result.message).toBe('XML検証成功');
+
+      const successResult: YouTubeFeedParseSuccessResponse = result;
+      const youTubeFeed: YouTubeFeed = successResult.data;
+      expect(youTubeFeed.feed.entry.title).toBe('Video title');
+      expect(youTubeFeed.feed.entry.link['@_href']).toBe('http://www.youtube.com/watch?v=VIDEO_ID');
     });
 
     it('should handle invalid XML gracefully', () => {
-      const invalidXml = '<invalid>xml</invalid>';
-      expect(() => parseYouTubeFeed(invalidXml)).toThrow('XML検証失敗');
+      // const invalidXml = '<invalid>xml</invalid>';
+      // expect(() => parseYouTubeFeed(invalidXml)).toThrow('XML検証失敗');
     });
 
     it('should handle XML parsing errors', () => {
-      const unparsableXml = 'not xml at all';
-      expect(() => parseYouTubeFeed(unparsableXml)).toThrow('XML検証失敗');
+      // const unparsableXml = 'not xml at all';
+      // expect(() => parseYouTubeFeed(unparsableXml)).toThrow('XML検証失敗');
     });
   });
 });

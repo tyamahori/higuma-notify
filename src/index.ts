@@ -2,7 +2,12 @@ import { Hono, Context } from 'hono';
 import { inspect } from 'node:util';
 import { DiscordNotification } from './types/DiscordNotification';
 import { YouTubeFeed } from './types/youtubeXmlInterface';
-import { parseYouTubeFeed, YouTubeFeedParseError } from './parseXml';
+import {
+  parseYouTubeFeed,
+  YouTubeFeedParseResponse,
+  YouTubeFeedParseSuccessResponse,
+  YouTubeFeedParseErrorResponse,
+} from './parseXml';
 import { sendDiscordNotification, DiscordNotificationSendError } from './sendNotify';
 
 const app = new Hono();
@@ -18,18 +23,23 @@ app.get('/websub/youtube', (context: Context) => {
 // 2) 投稿リクエスト (POST)
 app.post('/websub/youtube', async (context: Context) => {
   // parse YouTube feed from context
-  let youTubeFeed: YouTubeFeed;
-  try {
-    const contextBody: string = await context.req.text();
-    youTubeFeed = parseYouTubeFeed(contextBody);
-  } catch (error: unknown) {
-    if (error instanceof YouTubeFeedParseError) {
-      return context.json({ status: 'fail..', error: 'XML検証失敗', details: error.message }, 400);
-    }
-    throw error;
+  const contextBody: string = await context.req.text();
+  const youTubeFeedParseResponse: YouTubeFeedParseResponse = parseYouTubeFeed(contextBody);
+  if (!youTubeFeedParseResponse.isSuccess) {
+    const youTubeFeedParseErrorResponse: YouTubeFeedParseErrorResponse = youTubeFeedParseResponse;
+    return context.json(
+      {
+        status: 'fail..',
+        error: youTubeFeedParseErrorResponse.message,
+        details: youTubeFeedParseErrorResponse.error.issues,
+      },
+      400
+    );
   }
 
   // create discord notification from YouTube feed
+  const youTubeFeedParseSuccessResponse: YouTubeFeedParseSuccessResponse = youTubeFeedParseResponse;
+  const youTubeFeed: YouTubeFeed = youTubeFeedParseSuccessResponse.data;
   const discordNotification: DiscordNotification = {
     message: '新着動画だよ！（暖かみのあるbot）',
     title: youTubeFeed.feed.entry.title,
