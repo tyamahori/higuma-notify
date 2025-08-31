@@ -15,7 +15,7 @@ export class DiscordNotificationSendError extends Error {
   }
 }
 
-const sendDiscordNotification = async (
+export const sendDiscordNotification = async (
   webhookUrl: string,
   discordNotification: DiscordNotification
 ): Promise<void> => {
@@ -42,4 +42,3 @@ const sendDiscordNotification = async (
     );
   }
 };
-export default sendDiscordNotification;

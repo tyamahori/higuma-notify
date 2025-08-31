@@ -2,8 +2,8 @@ import { Hono } from 'hono';
 import { inspect } from 'node:util';
 import { DiscordNotification } from './types/DiscordNotification';
 import { YouTubeFeed } from './types/youtubeXmlInterface';
-import parseYouTubeFeed, { YouTubeFeedParseError } from './parseXml';
-import sendDiscordNotification, { DiscordNotificationSendError } from './sendNotify';
+import { parseYouTubeFeed, YouTubeFeedParseError } from './parseXml';
+import { sendDiscordNotification, DiscordNotificationSendError } from './sendNotify';
 
 const app = new Hono();
 

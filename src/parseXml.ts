@@ -9,7 +9,7 @@ export class YouTubeFeedParseError extends Error {
   }
 }
 
-const parseYouTubeFeed = (body: string): YouTubeFeed => {
+export const parseYouTubeFeed = (body: string): YouTubeFeed => {
   try {
     const youTubeFeed: YouTubeFeed = youTubeFeedSchema.parse(XmlParser(body));
     // 検証が成功したため、`xml`はYouTubeFeed型として扱える
@@ -25,5 +25,3 @@ const parseYouTubeFeed = (body: string): YouTubeFeed => {
     throw error;
   }
 };
-
-export default parseYouTubeFeed;
