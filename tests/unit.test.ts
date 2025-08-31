@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { XMLParser } from 'fast-xml-parser';
 import { youTubeFeedSchema } from '../src/types/youtubeXmlInterface';
-import { parseYouTubeXml } from '../src/parseXml';
+import { parseYouTubeFeed } from '../src/parseXml';
 import { sampleXmlString } from './fixtures/sample_xml';
 
 describe('Unit Tests', () => {
@@ -114,36 +114,19 @@ describe('Unit Tests', () => {
 
   describe('XML Parse Integration Tests', () => {
     it('should parse real YouTube WebSub XML and return DiscordContent', () => {
-      const result = parseYouTubeXml(sampleXmlString);
-
-      expect(result.success).toBe(true);
-
-      if (!('data' in result)) {
-        expect.fail('result.data is undefined: ' + result.message);
-      }
-      expect(result.data.message).toBe('新着動画だよ！（暖かみのあるbot）');
-      expect(result.data.title).toBe('Video title');
-      expect(result.data.url).toBe('http://www.youtube.com/watch?v=VIDEO_ID');
+      const result = parseYouTubeFeed(sampleXmlString);
+      expect(result.feed.entry.title).toBe('Video title');
+      expect(result.feed.entry.link['@_href']).toBe('http://www.youtube.com/watch?v=VIDEO_ID');
     });
 
     it('should handle invalid XML gracefully', () => {
       const invalidXml = '<invalid>xml</invalid>';
-      const result = parseYouTubeXml(invalidXml);
-
-      expect(result.success).toBe(false);
-      expect(result.message).toBe('XML検証失敗');
-      if (!('error' in result)) {
-        expect.fail('result.error is undefined: ' + result.message);
-      }
-      expect(result.error).toBeDefined();
+      expect(() => parseYouTubeFeed(invalidXml)).toThrow('XML検証失敗');
     });
 
     it('should handle XML parsing errors', () => {
       const unparsableXml = 'not xml at all';
-      const result = parseYouTubeXml(unparsableXml);
-
-      expect(result.success).toBe(false);
-      expect(result.message).toBe('XML検証失敗');
+      expect(() => parseYouTubeFeed(unparsableXml)).toThrow('XML検証失敗');
     });
   });
 });

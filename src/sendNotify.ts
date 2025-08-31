@@ -1,14 +1,15 @@
-import { DiscordContent } from './types/youtubeXmlInterface';
+// TODO: 'DiscordNotificationSender.ts' にファイル名を改名
+import { DiscordNotification } from './types/DiscordNotification';
 
-export class DiscordNotificationError extends Error {
+export class DiscordNotificationSendError extends Error {
   static {
-    this.prototype.name = 'DiscordNotificationError';
+    this.prototype.name = 'DiscordNotificationSendError';
   }
 
   constructor(
-    public status: number,
-    public message: string,
-    public description: string
+    readonly status: number,
+    readonly message: string,
+    readonly description: string
   ) {
     super(message);
   }
@@ -16,16 +17,16 @@ export class DiscordNotificationError extends Error {
 
 export const sendDiscordNotification = async (
   webhookUrl: string,
-  body: DiscordContent
+  discordNotification: DiscordNotification
 ): Promise<void> => {
   const requestBody = {
-    content: `${body.message}
-    **${body.title}**
-    URL: ${body.url}
+    content: `${discordNotification.message}
+    **${discordNotification.title}**
+    URL: ${discordNotification.url}
     `,
   };
 
-  const response = await fetch(webhookUrl, {
+  const response: Response = await fetch(webhookUrl, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -34,11 +35,10 @@ export const sendDiscordNotification = async (
   });
 
   if (!response.ok) {
-    throw new DiscordNotificationError(
+    throw new DiscordNotificationSendError(
       response.status,
       'Discord通知送信失敗',
       await response.text()
     );
   }
 };
-export default sendDiscordNotification;
