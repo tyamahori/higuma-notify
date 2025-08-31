@@ -3,7 +3,7 @@ import { z } from 'zod';
 /**
  * @see https://developers.google.com/youtube/v3/guides/push_notifications?utm_source=chatgpt.com xmlの構造の根拠
  */
-export const youTubeFeedSchema = z.object({
+export const youTubeFeedValidationSchema = z.object({
   feed: z.object({
     link: z.array(
       z.object({

@@ -1,4 +1,4 @@
 import { z } from 'zod';
-import { youTubeFeedSchema } from '../schema/YouTubeFeedSchema';
+import { youTubeFeedValidationSchema } from '../validation/YouTubeFeedValidationSchema';
 
-export type YouTubeFeed = z.infer<typeof youTubeFeedSchema>;
+export type YouTubeFeed = z.infer<typeof youTubeFeedValidationSchema>;

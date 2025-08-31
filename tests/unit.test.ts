@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { XMLParser } from 'fast-xml-parser';
-import { youTubeFeedSchema } from '../src/schema/YouTubeFeedSchema';
+import { youTubeFeedValidationSchema } from '../src/validation/YouTubeFeedValidationSchema';
 import { useYouTubeFeed } from '../src/UseYouTubeFeed';
 import { sampleXmlString } from './fixtures/sample_xml';
 
@@ -107,7 +107,7 @@ describe('Unit Tests', () => {
         },
       };
       expect(() => {
-        youTubeFeedSchema.parse(bodyExample);
+        youTubeFeedValidationSchema.parse(bodyExample);
       }).not.toThrow();
     });
   });

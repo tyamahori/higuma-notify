@@ -1,7 +1,7 @@
 import z from 'zod';
 import { XMLParser } from 'fast-xml-parser';
 import { YouTubeFeed } from './types/YouTubeFeed';
-import { youTubeFeedSchema } from './schema/YouTubeFeedSchema';
+import { youTubeFeedValidationSchema } from './validation/YouTubeFeedValidationSchema';
 
 export class YouTubeFeedParseError extends Error {
   static {
@@ -24,7 +24,7 @@ export const useYouTubeFeed = () => {
   const parseYouTubeFeed = (contextBody: string): YouTubeFeed => {
     const parsedXml = parseXml(contextBody);
     try {
-      const youTubeFeed: YouTubeFeed = youTubeFeedSchema.parse(parsedXml);
+      const youTubeFeed: YouTubeFeed = youTubeFeedValidationSchema.parse(parsedXml);
       // 検証が成功したため、`xml`はYouTubeFeed型として扱える
       console.log('XML検証成功:', youTubeFeed.feed.title);
       return youTubeFeed;
