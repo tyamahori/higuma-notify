@@ -15,7 +15,7 @@ export class DiscordNotificationSendError extends Error {
   }
 }
 
-export const useDiscordNortification = () => {
+export const useDiscordNotification = () => {
   const createDiscordNotification = (youTubeFeed: YouTubeFeed) => {
     return {
       message: '新着動画だよ！（暖かみのあるbot）',
@@ -55,4 +55,4 @@ export const useDiscordNortification = () => {
   return { createDiscordNotification, sendDiscordNotification };
 };
 
-export type UseDiscordNortification = ReturnType<typeof useDiscordNortification>;
+export type UseDiscordNotification = ReturnType<typeof useDiscordNotification>;
