@@ -44,9 +44,9 @@ app.post('/websub/youtube', async (context: Context) => {
       400
     );
   }
+  const youTubeFeed: YouTubeFeed = youTubeFeedParseResult.data;
 
   // create discord notification from YouTube feed
-  const youTubeFeed: YouTubeFeed = youTubeFeedParseResult.data;
   const discordNotification: DiscordNotification = {
     message: '新着動画だよ！（暖かみのあるbot）',
     title: youTubeFeed.feed.entry.title,
