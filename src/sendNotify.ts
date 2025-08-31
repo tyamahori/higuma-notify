@@ -1,6 +1,10 @@
 import { DiscordContent } from './types/youtubeXmlInterface';
 
 export class DiscordNotificationError extends Error {
+  static {
+    this.prototype.name = 'DiscordNotificationError';
+  }
+
   constructor(
     public status: number,
     public message: string,
