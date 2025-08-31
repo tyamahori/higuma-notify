@@ -16,8 +16,8 @@ export const useYouTubeFeed = () => {
         ignoreAttributes: false,
       }).parse(contextBody);
     } catch (error: unknown) {
-      console.error('パース失敗:', (error as Error).message);
-      throw new YouTubeFeedParseError('パース失敗', { cause: error });
+      console.error('XMLパース失敗:', (error as Error).message);
+      throw new YouTubeFeedParseError('XMLパース失敗', { cause: error });
     }
   };
 

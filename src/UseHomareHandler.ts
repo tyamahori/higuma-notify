@@ -45,7 +45,7 @@ export const useHomareHandler = () => {
     const contextBody: string = await context.req.text();
     const youTubeFeedParseResult: YouTubeFeedParseResult = tryParseYouTubeFeed(contextBody);
     if (!youTubeFeedParseResult.success) {
-      // 「パース失敗」 or 「XML検証失敗」時の Error の処理
+      // 「XMLパース失敗」 or 「XML検証失敗」時の Error の処理
       return context.json({ status: 'fail..', error: youTubeFeedParseResult.error.message }, 400);
     }
     const youTubeFeed: YouTubeFeed = youTubeFeedParseResult.data;
