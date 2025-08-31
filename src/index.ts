@@ -7,6 +7,24 @@ import { sendDiscordNotification, DiscordNotificationSendError } from './sendNot
 
 const app = new Hono();
 
+// Result type for parsing YouTube feed
+type ParseResult =
+  | { success: true; data: YouTubeFeed }
+  | { success: false; error: YouTubeFeedParseError };
+
+// Safe parsing function that returns Result type
+function tryParseYouTubeFeed(contextBody: string): ParseResult {
+  try {
+    return { success: true, data: parseYouTubeFeed(contextBody) };
+  } catch (error) {
+    if (error instanceof YouTubeFeedParseError) {
+      return { success: false, error };
+    }
+    console.error(`method: tryParseYouTubeFeed message: 予期せぬエラーが発生しました ${error}`);
+    throw error;
+  }
+}
+
 // 1) 確認リクエスト (GET)
 app.get('/websub/youtube', (context: Context) => {
   const query: string = context.req.query('hub.challenge') ?? 'empty';
@@ -17,17 +35,18 @@ app.get('/websub/youtube', (context: Context) => {
 
 // 2) 投稿リクエスト (POST)
 app.post('/websub/youtube', async (context: Context) => {
-  // parse YouTube feed from context
-  let youTubeFeed: YouTubeFeed;
-  try {
-    const contextBody: string = await context.req.text();
-    youTubeFeed = parseYouTubeFeed(contextBody);
-  } catch (error: unknown) {
-    if (error instanceof YouTubeFeedParseError) {
-      return context.json({ status: 'fail..', error: 'XML検証失敗', details: error.message }, 400);
-    }
-    throw error;
+  // parse YouTube feed from context using Result pattern
+  const contextBody: string = await context.req.text();
+  const parseResult = tryParseYouTubeFeed(contextBody);
+
+  if (!parseResult.success) {
+    return context.json(
+      { status: 'fail..', error: 'XML検証失敗', details: parseResult.error.message },
+      400
+    );
   }
+
+  const youTubeFeed = parseResult.data;
 
   // create discord notification from YouTube feed
   const discordNotification: DiscordNotification = {
@@ -45,10 +64,13 @@ app.post('/websub/youtube', async (context: Context) => {
     .catch((error: unknown) => {
       if (error instanceof DiscordNotificationSendError) {
         console.error(
-          `status: ${error.status}, message: ${error.message}, description: ${error.description}`
+          `method: sendDiscordNotification status: ${error.status}, message: ${error.message}, description: ${error.description}`
         );
         return context.json({ status: 'fail..', error: error.message }, 500);
       }
+      console.error(
+        `method: sendDiscordNotification message: 予期せぬエラーが発生しました ${error}`
+      );
       throw error;
     });
 });
