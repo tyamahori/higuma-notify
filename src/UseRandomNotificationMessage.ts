@@ -1,6 +1,6 @@
-export const useNotificationMessage = (
+export const useRandomNotificationMessage = (
   notificationMessages: string[],
-  generateNormalizedRandom: () => number // Random number generator: 0 <= N < 1
+  generateNormalizedRandom: () => number // Random number generator: 0 <= D < 1
 ) => {
   const generateRandomNotificationMessage = (): string => {
     if (notificationMessages.length === 0) {
@@ -14,4 +14,4 @@ export const useNotificationMessage = (
   return { generateRandomNotificationMessage };
 };
 
-export type UseNotificationMessage = ReturnType<typeof useNotificationMessage>;
+export type UseRandomNotificationMessage = ReturnType<typeof useRandomNotificationMessage>;

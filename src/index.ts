@@ -2,7 +2,10 @@ import { Hono, Context } from 'hono';
 import { inspect } from 'node:util';
 import { Bindings } from './types/Bindings';
 import { useHomareHandler, UseHomareHandler } from './UseHomareHandler';
-import { useNotificationMessage, UseNotificationMessage } from './UseNotificationMessage';
+import {
+  useRandomNotificationMessage,
+  UseRandomNotificationMessage,
+} from './UseRandomNotificationMessage';
 import { notificationMessages } from './constants/NotificationMessages';
 
 /**
@@ -23,10 +26,8 @@ app.get('/websub/youtube', (context: Context) => {
 // 2) 投稿リクエスト (POST)
 app.post('/websub/youtube', async (context: Context) => {
   // ランダムな通知メッセージを生成
-  const { generateRandomNotificationMessage }: UseNotificationMessage = useNotificationMessage(
-    notificationMessages.list,
-    () => Math.random()
-  );
+  const { generateRandomNotificationMessage }: UseRandomNotificationMessage =
+    useRandomNotificationMessage(notificationMessages.list, () => Math.random());
   const notificationMessage: string = generateRandomNotificationMessage();
   /**
    * 痺れますね！
