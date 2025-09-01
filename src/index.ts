@@ -22,13 +22,15 @@ app.get('/websub/youtube', (context: Context) => {
 
 // 2) 投稿リクエスト (POST)
 app.post('/websub/youtube', async (context: Context) => {
+  // ランダムな通知メッセージを生成
+  const { generateRandomNotificationMessage }: UseNotificationMessage = useNotificationMessage(
+    notificationMessages.list,
+    () => Math.random()
+  );
+  const notificationMessage: string = generateRandomNotificationMessage();
   /**
    * 痺れますね！
    */
-  const { generateRandomNotificationMessage }: UseNotificationMessage = useNotificationMessage(
-    notificationMessages.list
-  );
-  const notificationMessage: string = generateRandomNotificationMessage();
   return await postShibireMasuNeNotification(context, notificationMessage);
 });
 

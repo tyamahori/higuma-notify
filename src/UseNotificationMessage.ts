@@ -1,9 +1,14 @@
-export const useNotificationMessage = (notificationMessages: string[]) => {
+export const useNotificationMessage = (
+  notificationMessages: string[],
+  generateNormalizedRandom: () => number // Random number generator: 0 <= N < 1
+) => {
   const generateRandomNotificationMessage = (): string => {
     if (notificationMessages.length === 0) {
       throw new Error('通知メッセージなし');
     }
-    return notificationMessages[0]; // TODO: 返却値をランダムに修正
+    const normalizedRandom: number = generateNormalizedRandom();
+    const nth: number = Math.floor(notificationMessages.length * normalizedRandom);
+    return notificationMessages[nth];
   };
 
   return { generateRandomNotificationMessage };
