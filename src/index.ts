@@ -1,5 +1,6 @@
 import { Hono, Context } from 'hono';
 import { inspect } from 'node:util';
+import { Bindings } from './types/Bindings';
 import { useHomareHandler, UseHomareHandler } from './UseHomareHandler';
 import { useNotificationMessage } from './UseNotificationMessage';
 import { notificationMessages } from './constants/NotificationMessages';
@@ -9,7 +10,7 @@ import { notificationMessages } from './constants/NotificationMessages';
  */
 const { battleFaceOk, postShibireMasuNeNotification }: UseHomareHandler = useHomareHandler();
 
-const app = new Hono();
+const app = new Hono<{ Bindings: Bindings }>();
 
 // 1) 確認リクエスト (GET)
 app.get('/websub/youtube', (context: Context) => {
