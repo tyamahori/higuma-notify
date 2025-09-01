@@ -3,8 +3,8 @@ name: pubsubhubbub subscribe
 on:
   schedule:
     # 毎日 18:00 UTC = 日本時間 03:00 に実行
-    - cron: "0 18 * * *"
-  workflow_dispatch: {}  # 手動実行も可能
+    - cron: '0 18 * * *'
+  workflow_dispatch: {} # 手動実行も可能
 
 permissions:
   contents: read
