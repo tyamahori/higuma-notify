@@ -1,6 +1,10 @@
 import { Context } from 'hono';
 import { DiscordNotification } from './types/DiscordNotification';
-import { useDiscordNotification, DiscordNotificationSendError } from './UseDiscordNotification';
+import {
+  useDiscordNotification,
+  DiscordNotificationSendError,
+  UseDiscordNotification,
+} from './UseDiscordNotification';
 import { YouTubeFeed } from './types/YouTubeFeed';
 import { useYouTubeFeed, YouTubeFeedParseError } from './UseYouTubeFeed';
 
@@ -40,7 +44,8 @@ export const useHomareHandler = () => {
    * 痺れますね！
    */
   const postShibireMasuNeNotification = async (context: Context) => {
-    const { createDiscordNotification, sendDiscordNotification } = useDiscordNotification();
+    const { createDiscordNotification, sendDiscordNotification }: UseDiscordNotification =
+      useDiscordNotification();
     // parse YouTube feed from context using Result pattern
     const contextBody: string = await context.req.text();
     const youTubeFeedParseResult: YouTubeFeedParseResult = tryParseYouTubeFeed(contextBody);
