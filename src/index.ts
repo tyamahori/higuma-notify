@@ -1,13 +1,14 @@
 import { Hono, Context } from 'hono';
 import { inspect } from 'node:util';
 import { useHomareHandler, UseHomareHandler } from './UseHomareHandler';
+import { Bindings } from './types/Bindings';
 
 /**
  * 誉れでございます。
  */
 const { battleFaceOk, postShibireMasuNeNotification }: UseHomareHandler = useHomareHandler();
 
-const app = new Hono();
+const app = new Hono<{ Bindings: Bindings }>();
 
 // 1) 確認リクエスト (GET)
 app.get('/websub/youtube', (context: Context) => {
