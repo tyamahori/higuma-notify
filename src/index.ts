@@ -1,6 +1,8 @@
 import { Hono, Context } from 'hono';
 import { inspect } from 'node:util';
 import { useHomareHandler, UseHomareHandler } from './UseHomareHandler';
+import { useNotificationMessage } from './UseNotificationMessage';
+import { notificationMessages } from './constants/NotificationMessages';
 
 /**
  * 誉れでございます。
@@ -22,7 +24,8 @@ app.post('/websub/youtube', async (context: Context) => {
   /**
    * 痺れますね！
    */
-  return await postShibireMasuNeNotification(context);
+  const { generateRandomNotificationMessage } = useNotificationMessage(notificationMessages.list);
+  return await postShibireMasuNeNotification(context, generateRandomNotificationMessage());
 });
 
 // 999) catch all exceptional errors
