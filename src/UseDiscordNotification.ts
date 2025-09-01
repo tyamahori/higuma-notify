@@ -18,7 +18,7 @@ export class DiscordNotificationSendError extends Error {
 export const useDiscordNotification = () => {
   const createDiscordNotification = (notificationMessage: string, youTubeFeed: YouTubeFeed) => {
     return {
-      message: '新着動画だよ！（暖かみのあるbot）',
+      message: notificationMessage,
       title: youTubeFeed.feed.entry.title,
       url: youTubeFeed.feed.entry.link['@_href'],
     };
