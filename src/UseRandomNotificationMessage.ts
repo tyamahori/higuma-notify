@@ -7,6 +7,9 @@ export const useRandomNotificationMessage = (
       throw new Error('通知メッセージなし');
     }
     const normalizedRandom: number = generateNormalizedRandom();
+    if (normalizedRandom < 0.0 || 1.0 <= normalizedRandom) {
+      throw new Error('生成した正規化乱数が範囲外');
+    }
     const nth: number = Math.floor(notificationMessages.length * normalizedRandom);
     return notificationMessages[nth];
   };
