@@ -1,8 +1,8 @@
 import { Context } from 'hono';
 import { DiscordNotification } from './types/DiscordNotification';
-import { YouTubeFeed } from './types/youtubeXmlInterface';
-import { parseYouTubeFeed, YouTubeFeedParseError } from './parseXml';
-import { sendDiscordNotification, DiscordNotificationSendError } from './sendNotify';
+import { useDiscordNotification, DiscordNotificationSendError } from './UseDiscordNotification';
+import { YouTubeFeed } from './types/YouTubeFeed';
+import { useYouTubeFeed, YouTubeFeedParseError } from './UseYouTubeFeed';
 
 export const useHomareHandler = () => {
   // Result type for parsing YouTube feed
@@ -12,6 +12,7 @@ export const useHomareHandler = () => {
 
   // Safe parsing function that returns Result type
   const tryParseYouTubeFeed = (contextBody: string): YouTubeFeedParseResult => {
+    const { parseYouTubeFeed } = useYouTubeFeed();
     try {
       return { success: true, data: parseYouTubeFeed(contextBody) };
     } catch (error) {
@@ -39,23 +40,18 @@ export const useHomareHandler = () => {
    * 痺れますね！
    */
   const postShibireMasuNeNotification = async (context: Context) => {
+    const { createDiscordNotification, sendDiscordNotification } = useDiscordNotification();
     // parse YouTube feed from context using Result pattern
     const contextBody: string = await context.req.text();
     const youTubeFeedParseResult: YouTubeFeedParseResult = tryParseYouTubeFeed(contextBody);
     if (!youTubeFeedParseResult.success) {
-      return context.json(
-        { status: 'fail..', error: 'XML検証失敗', details: youTubeFeedParseResult.error.message },
-        400
-      );
+      // 「XMLパース失敗」 or 「XML検証失敗」時の Error の処理
+      return context.json({ status: 'fail..', error: youTubeFeedParseResult.error.message }, 400);
     }
     const youTubeFeed: YouTubeFeed = youTubeFeedParseResult.data;
 
     // create discord notification from YouTube feed
-    const discordNotification: DiscordNotification = {
-      message: '新着動画だよ！（暖かみのあるbot）',
-      title: youTubeFeed.feed.entry.title,
-      url: youTubeFeed.feed.entry.link['@_href'],
-    };
+    const discordNotification: DiscordNotification = createDiscordNotification(youTubeFeed);
 
     // send discord notification
     const webhookUrl: string = (context.env as { DISCORD_WEBHOOK_URL: string }).DISCORD_WEBHOOK_URL;
