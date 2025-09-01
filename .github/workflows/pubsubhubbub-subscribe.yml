@@ -27,6 +27,6 @@ jobs:
           curl -X POST https://pubsubhubbub.appspot.com/subscribe \
           -d "hub.mode=subscribe" \
           -d "hub.topic=https://www.youtube.com/xml/feeds/videos.xml?channel_id=UC_aBYQ3phPsrkSXkpnZeDZw" \
-          -d "hub.callback=${{ secrets.CALLBACK }}" \
+          -d "hub.callback=${{ secrets.HUB_CALLBACK }}" \
           -d "hub.secret=${{ secrets.HUB_SECRET }}" \
           -d "hub.lease_seconds=800000"
