@@ -1,6 +1,6 @@
 export const useRandomNotificationMessage = (
   notificationMessages: string[],
-  generateNormalizedRandom: () => number // Random number generator: 0 <= D < 1
+  generateNormalizedRandom: () => number // Random decimal number generator: 0.0 <= D < 1.0
 ) => {
   const generateRandomNotificationMessage = (): string => {
     if (notificationMessages.length === 0) {
