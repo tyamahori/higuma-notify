@@ -16,7 +16,10 @@ export class DiscordNotificationSendError extends Error {
 }
 
 export const useDiscordNotification = () => {
-  const createDiscordNotification = (notificationMessage: string, youTubeFeed: YouTubeFeed) => {
+  const createDiscordNotification = (
+    notificationMessage: string,
+    youTubeFeed: YouTubeFeed
+  ): DiscordNotification => {
     return {
       message: notificationMessage,
       title: youTubeFeed.feed.entry.title,

@@ -19,14 +19,14 @@ export const youTubeFeedValidationSchema = z.object({
       title: z.string(), // video title
       link: z.object({
         '@_rel': z.string(),
-        '@_href': z.string().url(), // 動画のURL
+        '@_href': z.url(), // 動画のURL
       }),
       author: z.object({
         name: z.string(),
-        uri: z.string().url(),
+        uri: z.url(),
       }),
-      published: z.string().datetime({ offset: true }),
-      updated: z.string().datetime({ offset: true }),
+      published: z.iso.datetime({ offset: true }),
+      updated: z.iso.datetime({ offset: true }),
     }),
   }),
 });
