@@ -25,8 +25,8 @@ export const youTubeFeedValidationSchema = z.object({
         name: z.string(),
         uri: z.url(),
       }),
-      published: z.iso.datetime(),
-      updated: z.iso.datetime(),
+      published: z.iso.datetime({ offset: true }),
+      updated: z.iso.datetime({ offset: true }),
     }),
   }),
 });
