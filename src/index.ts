@@ -25,7 +25,7 @@ app.post('/websub/youtube', async (context: Context) => {
    * 痺れますね！
    */
   const { generateRandomNotificationMessage } = useNotificationMessage(notificationMessages.list);
-  const notificationMessage = generateRandomNotificationMessage();
+  const notificationMessage: string = generateRandomNotificationMessage();
   return await postShibireMasuNeNotification(context, notificationMessage);
 });
 
