@@ -6,7 +6,7 @@ import {
   UseDiscordNotification,
 } from './UseDiscordNotification';
 import { YouTubeFeed } from './types/YouTubeFeed';
-import { useYouTubeFeed, YouTubeFeedParseError } from './UseYouTubeFeed';
+import { useYouTubeFeed, YouTubeFeedParseError, UseYouTubeFeed } from './UseYouTubeFeed';
 
 export const useHomareHandler = () => {
   // Result type for parsing YouTube feed
@@ -16,7 +16,8 @@ export const useHomareHandler = () => {
 
   // Safe parsing function that returns Result type
   const tryParseYouTubeFeed = (contextBody: string): YouTubeFeedParseResult => {
-    const { parseYouTubeFeed } = useYouTubeFeed();
+    const { parseYouTubeFeed }: UseYouTubeFeed = useYouTubeFeed();
+
     try {
       return { success: true, data: parseYouTubeFeed(contextBody) };
     } catch (error) {
@@ -43,9 +44,10 @@ export const useHomareHandler = () => {
   /**
    * 痺れますね！
    */
-  const postShibireMasuNeNotification = async (context: Context) => {
+  const postShibireMasuNeNotification = async (context: Context, notificationMessage: string) => {
     const { createDiscordNotification, sendDiscordNotification }: UseDiscordNotification =
       useDiscordNotification();
+
     // parse YouTube feed from context using Result pattern
     const contextBody: string = await context.req.text();
     const youTubeFeedParseResult: YouTubeFeedParseResult = tryParseYouTubeFeed(contextBody);
@@ -56,7 +58,10 @@ export const useHomareHandler = () => {
     const youTubeFeed: YouTubeFeed = youTubeFeedParseResult.data;
 
     // create discord notification from YouTube feed
-    const discordNotification: DiscordNotification = createDiscordNotification(youTubeFeed);
+    const discordNotification: DiscordNotification = createDiscordNotification(
+      notificationMessage,
+      youTubeFeed
+    );
 
     // send discord notification
     const webhookUrl: string = (context.env as { DISCORD_WEBHOOK_URL: string }).DISCORD_WEBHOOK_URL;
