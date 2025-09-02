@@ -132,4 +132,44 @@ describe('Unit Tests', () => {
       expect(() => parseYouTubeFeed(unparsableXml)).toThrow('XML検証失敗');
     });
   });
+  describe('Zod Schema URL Error Tests', () => {
+    it('should throw an error when the URL host name is incorrect', () => {
+      // Zodで検証
+      // URLのホスト名が違う場合にErrorを返すことを確認
+      const bodyExample = {
+        feed: {
+          link: [
+            { '@_rel': 'hub', '@_href': 'https://pubsubhubbub.appspot.com' },
+            {
+              '@_rel': 'self',
+              '@_href': 'https://www.youtube.com/xml/feeds/videos.xml?channel_id=CHANNEL_ID',
+            },
+          ],
+          title: 'YouTube video feed',
+          updated: '2015-04-01T19:05:24.552394234+00:00',
+          entry: {
+            id: 'yt:video:VIDEO_ID',
+            'yt:videoId': 'VIDEO_ID',
+            'yt:channelId': 'CHANNEL_ID',
+            title: 'Video title',
+            link: {
+              '@_rel': 'alternate',
+              '@_href': 'http://www.example.com/watch?v=VIDEO_ID',
+            },
+            author: {
+              name: 'Channel title',
+              uri: 'http://www.youtube.com/channel/CHANNEL_ID',
+            },
+            published: '2015-03-06T21:40:57+00:00',
+            updated: '2015-03-09T19:05:24.552394234+00:00',
+          },
+          '@_xmlns:yt': 'http://www.youtube.com/xml/schemas/2015',
+          '@_xmlns': 'http://www.w3.org/2005/Atom',
+        },
+      };
+      expect(() => {
+        youTubeFeedValidationSchema.parse(bodyExample);
+      }).toThrow();
+    });
+  });
 });

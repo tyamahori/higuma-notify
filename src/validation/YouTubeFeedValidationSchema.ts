@@ -8,7 +8,7 @@ export const youTubeFeedValidationSchema = z.object({
     link: z.array(
       z.object({
         '@_rel': z.string(),
-        '@_href': z.string().url(),
+        '@_href': z.url(),
       })
     ),
     title: z.string(),
@@ -19,11 +19,11 @@ export const youTubeFeedValidationSchema = z.object({
       title: z.string(), // video title
       link: z.object({
         '@_rel': z.string(),
-        '@_href': z.url(), // 動画のURL
+        '@_href': z.url({ hostname: /^www\.youtube\.com$/ }), // 動画のURL
       }),
       author: z.object({
         name: z.string(),
-        uri: z.url(),
+        uri: z.url({ hostname: /^www\.youtube\.com$/ }),
       }),
       published: z.iso.datetime({ offset: true }),
       updated: z.iso.datetime({ offset: true }),
