@@ -1,0 +1,32 @@
+name: pubsubhubbub subscribe
+
+on:
+  schedule:
+    # 毎日 18:00 UTC = 日本時間 03:00 に実行
+    - cron: '0 18 * * *'
+  workflow_dispatch: {} # 手動実行も可能
+
+permissions:
+  contents: read
+
+# 前回が走っている間の二重起動を防ぐ
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  subscribe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Subscribe with curl (GET)
+        shell: bash
+        run: |
+          set -euo pipefail          
+          curl -X POST https://pubsubhubbub.appspot.com/subscribe \
+          -d "hub.mode=subscribe" \
+          -d "hub.topic=https://www.youtube.com/xml/feeds/videos.xml?channel_id=UC_aBYQ3phPsrkSXkpnZeDZw" \
+          -d "hub.callback=${{ secrets.HUB_CALLBACK }}" \
+          -d "hub.secret=${{ secrets.HUB_SECRET }}" \
+          -d "hub.lease_seconds=800000"
