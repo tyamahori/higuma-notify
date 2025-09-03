@@ -5,7 +5,7 @@ import {
 } from '../src/UseRandomNotificationMessage';
 
 describe('Test UseRandomNOtificationMessage', () => {
-  describe('Notification Message Generate Test', () => {
+  describe('Random Notification Message Generate Test', () => {
     // リストの項目を順番に出力するためのメソッドを内包 (副作用込み)
     const useSequence = () => {
       let si: number = -1;
@@ -24,7 +24,7 @@ describe('Test UseRandomNOtificationMessage', () => {
       'test message 3',
       'test message 4',
     ];
-    it('should hoge', () => {
+    it('should notification messages are expected when random number is generated in a deliberate order', () => {
       const { sequence } = useSequence();
       const { generateRandomNotificationMessage }: UseRandomNotificationMessage =
         useRandomNotificationMessage(testMessages, () => sequence());
