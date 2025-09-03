@@ -1,19 +1,18 @@
 export const useRandomNotificationMessage = (
   notificationMessages: string[],
-  generateRandomNth: () => number // Random integer N is generated: 0 <= N < notificationMessages.length
+  generateRandomInt: () => number // Random integer N is generated
 ) => {
   const generateRandomNotificationMessage = (): string => {
     if (notificationMessages.length === 0) {
       throw new Error('通知メッセージなし');
     }
-    const randomNth: number = generateRandomNth();
-    if (
-      !(Number.isInteger(randomNth) && 0 <= randomNth && randomNth < notificationMessages.length)
-    ) {
-      throw new Error('生成した乱数が範囲外');
+    const randomInt: number = generateRandomInt();
+    if (!Number.isInteger(randomInt)) {
+      throw new Error('生成した乱数が整数ではない');
     }
 
-    return notificationMessages[randomNth];
+    const listLength = notificationMessages.length;
+    return notificationMessages[(listLength + randomInt) % listLength];
   };
 
   return { generateRandomNotificationMessage };
