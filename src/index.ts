@@ -26,8 +26,13 @@ app.get('/websub/youtube', (context: Context) => {
 // 2) 投稿リクエスト (POST)
 app.post('/websub/youtube', async (context: Context) => {
   // ランダムな通知メッセージを生成
+  const generateRandomNth = (listLength: number): number => {
+    return Math.floor(Math.random() * listLength) % listLength;
+  };
   const { generateRandomNotificationMessage }: UseRandomNotificationMessage =
-    useRandomNotificationMessage(notificationMessages.list, () => Math.random());
+    useRandomNotificationMessage(notificationMessages.list, () =>
+      generateRandomNth(notificationMessages.list.length)
+    );
   const notificationMessage: string = generateRandomNotificationMessage();
   /**
    * 痺れますね！
