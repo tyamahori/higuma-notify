@@ -6,9 +6,12 @@ export const useRandomNotificationMessage = (
     if (notificationMessages.length === 0) {
       throw new Error('通知メッセージなし');
     }
+    if (!(notificationMessages.length < (2 ^ 16))) {
+      throw new Error('通知メッセージの数が大杉');
+    }
     const randomInt: number = generateRandomInt();
     if (!Number.isInteger(randomInt)) {
-      throw new Error('生成した乱数が整数ではない');
+      throw new Error('生成した乱数が非整数');
     }
 
     const listLength = notificationMessages.length;
