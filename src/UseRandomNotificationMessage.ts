@@ -6,7 +6,7 @@ export const useRandomNotificationMessage = (
     if (notificationMessages.length === 0) {
       throw new Error('通知メッセージなし');
     }
-    if (!(notificationMessages.length < (2 ^ 16))) {
+    if (!(notificationMessages.length < 1024)) {
       throw new Error('通知メッセージの数が大杉');
     }
     const randomInt: number = generateRandomInt();
