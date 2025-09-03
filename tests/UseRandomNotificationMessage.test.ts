@@ -33,6 +33,10 @@ describe('Test UseRandomNOtificationMessage', () => {
       expect(generateRandomNotificationMessage()).toBe('test message 2');
       expect(generateRandomNotificationMessage()).toBe('test message 3');
       expect(generateRandomNotificationMessage()).toBe('test message 4');
+      expect(generateRandomNotificationMessage()).toBe('test message 1');
+      expect(generateRandomNotificationMessage()).toBe('test message 2');
+      expect(generateRandomNotificationMessage()).toBe('test message 3');
+      expect(generateRandomNotificationMessage()).toBe('test message 4');
     });
   });
 });

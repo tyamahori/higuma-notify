@@ -15,7 +15,7 @@ export const useRandomNotificationMessage = (
     }
 
     const listLength = notificationMessages.length;
-    return notificationMessages[(listLength + randomInt) % listLength];
+    return notificationMessages[randomInt % listLength];
   };
 
   return { generateRandomNotificationMessage };
