@@ -24,7 +24,7 @@ describe('Test UseRandomNOtificationMessage', () => {
       'test message 3',
       'test message 4',
     ];
-    it('should notification messages are expected when random number are deliberately generated in a sequential order', () => {
+    it('should notification messages be expected when random number are deliberately generated in a sequential order', () => {
       const { sequence } = useSequence();
       const { generateRandomNotificationMessage }: UseRandomNotificationMessage =
         useRandomNotificationMessage(testMessages, () => sequence());
