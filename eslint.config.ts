@@ -21,6 +21,7 @@ export default [
       globals: {
         console: 'readonly',
         fetch: 'readonly',
+        RateLimit: 'readonly',
       },
     },
     plugins: {

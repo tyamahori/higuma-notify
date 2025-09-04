@@ -7,6 +7,7 @@ import {
   UseRandomNotificationMessage,
 } from './UseRandomNotificationMessage';
 import { notificationMessages } from './constants/NotificationMessages';
+import { validateRateLimit } from './validation/RateLimitValidation';
 
 /**
  * 誉れでございます。
@@ -23,8 +24,11 @@ app.get('/websub/youtube', (context: Context) => {
   return battleFaceOk(context);
 });
 
-// 2) 投稿リクエスト (POST)
+// 2) 投稿リクエスト (POST) with rate limiting
 app.post('/websub/youtube', async (context: Context) => {
+  // RateLimit のバリデーションチェック
+  await validateRateLimit(context);
+
   // ランダムな通知メッセージを生成
   const { generateRandomNotificationMessage }: UseRandomNotificationMessage =
     useRandomNotificationMessage(notificationMessages.list, () => Math.random());
