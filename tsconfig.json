@@ -8,6 +8,6 @@
     "lib": ["ESNext", "DOM"],
     "jsx": "react-jsx",
     "jsxImportSource": "hono/jsx",
-    "types": ["@cloudflare/workers-types", "@types/node"],
+    "types": ["@cloudflare/workers-types", "@types/node"]
   }
 }
