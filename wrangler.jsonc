@@ -21,4 +21,10 @@
       },
     ],
   },
+  "kv_namespaces": [
+    {
+      "binding": "higuma_notify",
+      "id": "d4e679c57a8444a190ef64c8c24db932",
+    },
+  ],
 }
