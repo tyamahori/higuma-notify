@@ -23,10 +23,11 @@ export const useYouTubeFeed = () => {
 
   const parseYouTubeFeed = (contextBody: string): YouTubeFeed => {
     const parsedXml = parseXml(contextBody);
+    console.log(`XML: ${JSON.stringify(parsedXml)}`);
     try {
       const youTubeFeed: YouTubeFeed = youTubeFeedValidationSchema.parse(parsedXml);
       // 検証が成功したため、`xml`はYouTubeFeed型として扱える
-      console.log('XML検証成功:', youTubeFeed.feed.title);
+      console.log(`XML検証成功: ${JSON.stringify(youTubeFeed)}`);
       return youTubeFeed;
     } catch (error: unknown) {
       // 検証に失敗した場合、ZodErrorがスローされる
