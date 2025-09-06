@@ -21,4 +21,11 @@
       },
     ],
   },
+  "kv_namespaces": [
+    {
+      "binding": "HIGUMA_NOTIFY",
+      "id": "d4e679c57a8444a190ef64c8c24db932",
+      "preview_id": "034212e44e2b4df2b9648f64f746a08a",
+    },
+  ],
 }

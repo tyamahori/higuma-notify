@@ -22,6 +22,7 @@ export default [
         console: 'readonly',
         fetch: 'readonly',
         RateLimit: 'readonly',
+        KVNamespace: 'readonly',
       },
     },
     plugins: {
