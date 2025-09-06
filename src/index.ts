@@ -31,7 +31,7 @@ app.post('/websub/youtube', async (context: Context) => {
 
   // ランダムな通知メッセージを生成
   const { generateRandomNotificationMessage }: UseRandomNotificationMessage =
-    useRandomNotificationMessage(notificationMessages.list, () => Math.random());
+    useRandomNotificationMessage(notificationMessages.list, () => Math.floor(Math.random() * 256));
   const notificationMessage: string = generateRandomNotificationMessage();
   /**
    * 痺れますね！
