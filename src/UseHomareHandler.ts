@@ -7,6 +7,11 @@ import {
 } from './UseDiscordNotification';
 import { YouTubeFeed } from './types/YouTubeFeed';
 import { useYouTubeFeed, YouTubeFeedParseError, UseYouTubeFeed } from './UseYouTubeFeed';
+import {
+  useYouTubeFeedKeyValueStore,
+  UseYouTubeFeedKeyValueStore,
+  YouTubeFeedKeyValueStoreError,
+} from './UseYouTubeFeedKeyValueStore';
 
 export const useHomareHandler = () => {
   // Result type for parsing YouTube feed
@@ -17,7 +22,6 @@ export const useHomareHandler = () => {
   // Safe parsing function that returns Result type
   const tryParseYouTubeFeed = (contextBody: string): YouTubeFeedParseResult => {
     const { parseYouTubeFeed }: UseYouTubeFeed = useYouTubeFeed();
-
     try {
       return { success: true, data: parseYouTubeFeed(contextBody) };
     } catch (error) {
@@ -47,6 +51,8 @@ export const useHomareHandler = () => {
   const postShibireMasuNeNotification = async (context: Context, notificationMessage: string) => {
     const { createDiscordNotification, sendDiscordNotification }: UseDiscordNotification =
       useDiscordNotification();
+    const { isYouTubeFeedAlreadyStored, storeYouTubeFeedKeyValue }: UseYouTubeFeedKeyValueStore =
+      useYouTubeFeedKeyValueStore();
 
     // parse YouTube feed from context using Result pattern
     const contextBody: string = await context.req.text();
@@ -56,6 +62,21 @@ export const useHomareHandler = () => {
       return context.json({ status: 'fail..', error: youTubeFeedParseResult.error.message }, 400);
     }
     const youTubeFeed: YouTubeFeed = youTubeFeedParseResult.data;
+
+    // check YouTube feed is already notified
+    try {
+      if (!isYouTubeFeedAlreadyStored(youTubeFeed)) {
+        storeYouTubeFeedKeyValue(youTubeFeed);
+      }
+    } catch (error: unknown) {
+      if (error instanceof YouTubeFeedKeyValueStoreError) {
+        return context.json({ status: 'fail..', error: error.message }, 500);
+      }
+      console.error(
+        `method: postShibireMasuNeNotification message: どうやらバインダーが投げられたようだ ${error}`
+      );
+      throw error;
+    }
 
     // create discord notification from YouTube feed
     const discordNotification: DiscordNotification = createDiscordNotification(
