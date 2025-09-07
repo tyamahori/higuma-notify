@@ -45,13 +45,20 @@ export const useHomareHandler = () => {
   /**
    * 痺れますね！
    */
-  const postShibireMasuNeNotification = async (context: Context, notificationMessage: string) => {
+  const postShibireMasuNeNotification = async (
+    // リクエストボディは Signature を検証する際にすでに読み取られており、context.req.text() などで再読取りを
+    // しようとすると Body already consumed エラーが発生してしまう
+    // そのため、req を明示的に除外して、誤って context.req を触ったら型エラーになるようにする
+    // リクエストボディを利用する場合は、第3引数の reqBody を使う
+    context: Omit<HigumaContext, 'req'>,
+    notificationMessage: string,
+    reqBody: string
+  ) => {
     const { createDiscordNotification, sendDiscordNotification }: UseDiscordNotification =
       useDiscordNotification();
 
     // parse YouTube feed from context using Result pattern
-    const contextBody: string = await context.req.text();
-    const youTubeFeedParseResult: YouTubeFeedParseResult = tryParseYouTubeFeed(contextBody);
+    const youTubeFeedParseResult: YouTubeFeedParseResult = tryParseYouTubeFeed(reqBody);
     if (!youTubeFeedParseResult.success) {
       // 「XMLパース失敗」 or 「XML検証失敗」時の Error の処理
       return context.json({ status: 'fail..', error: youTubeFeedParseResult.error.message }, 400);
@@ -65,7 +72,7 @@ export const useHomareHandler = () => {
     );
 
     // send discord notification
-    const webhookUrl: string = (context.env as { DISCORD_WEBHOOK_URL: string }).DISCORD_WEBHOOK_URL;
+    const webhookUrl: string = context.env.DISCORD_WEBHOOK_URL;
     return await sendDiscordNotification(webhookUrl, discordNotification)
       .then(() => {
         return context.json({ status: 'success', message: 'Discord通知送信成功' });
