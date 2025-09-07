@@ -51,7 +51,7 @@ export const useHomareHandler = () => {
   const postShibireMasuNeNotification = async (context: Context, notificationMessage: string) => {
     const { createDiscordNotification, sendDiscordNotification }: UseDiscordNotification =
       useDiscordNotification();
-    const { isYouTubeFeedAlreadyStored, storeYouTubeFeedKeyValue }: UseYouTubeFeedKeyValueStore =
+    const { isYouTubeFeedAlreadyStored, storeYouTubeFeed }: UseYouTubeFeedKeyValueStore =
       useYouTubeFeedKeyValueStore();
 
     // parse YouTube feed from context using Result pattern
@@ -63,10 +63,10 @@ export const useHomareHandler = () => {
     }
     const youTubeFeed: YouTubeFeed = youTubeFeedParseResult.data;
 
-    // check YouTube feed is already notified
+    // check YouTube feed is already stored to key-value store
     try {
       if (!isYouTubeFeedAlreadyStored(youTubeFeed)) {
-        storeYouTubeFeedKeyValue(youTubeFeed);
+        storeYouTubeFeed(youTubeFeed);
       }
     } catch (error: unknown) {
       if (error instanceof YouTubeFeedKeyValueStoreError) {

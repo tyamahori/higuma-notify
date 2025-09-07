@@ -27,7 +27,7 @@ export const useYouTubeFeedKeyValueStore = () => {
     }
   };
 
-  const storeYouTubeFeedKeyValue = (youTubeFeed: YouTubeFeed): void => {
+  const storeYouTubeFeed = (youTubeFeed: YouTubeFeed): void => {
     try {
       const key: string = youTubeFeed.feed.entry.id;
       const value: string = youTubeFeed.feed.entry.title;
@@ -39,13 +39,13 @@ export const useYouTubeFeedKeyValueStore = () => {
         });
       }
       console.error(
-        `method: storeYouTubeFeedKeyValue message: 投げられたバインダーの資料がうまく回収できない ${error}`
+        `method: storeYouTubeFeed message: 投げられたバインダーの資料がうまく回収できない ${error}`
       );
       throw error;
     }
   };
 
-  return { isYouTubeFeedAlreadyStored, storeYouTubeFeedKeyValue };
+  return { isYouTubeFeedAlreadyStored, storeYouTubeFeed };
 };
 
 export type UseYouTubeFeedKeyValueStore = ReturnType<typeof useYouTubeFeedKeyValueStore>;
