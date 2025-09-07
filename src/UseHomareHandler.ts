@@ -63,18 +63,24 @@ export const useHomareHandler = () => {
     }
     const youTubeFeed: YouTubeFeed = youTubeFeedParseResult.data;
 
-    // check YouTube feed is already stored to key-value store
+    // check YouTube feed is already stored
     try {
-      if (!isYouTubeFeedAlreadyStored(youTubeFeed)) {
-        storeYouTubeFeed(youTubeFeed);
+      if (isYouTubeFeedAlreadyStored(youTubeFeed)) {
+        console.error(
+          `method: postShibireMasuNeNotification message: 資料はバインダーにすでに挟まっていたようだ`
+        );
+        return context.json(
+          { status: 'fail..', error: '資料はバインダーにすでに挟まっていたようだ' },
+          500
+        );
       }
     } catch (error: unknown) {
       if (error instanceof YouTubeFeedStoreError) {
+        console.error(
+          `method: postShibireMasuNeNotification message: どうやらバインダーが投げられたようだ ${error}`
+        );
         return context.json({ status: 'fail..', error: error.message }, 500);
       }
-      console.error(
-        `method: postShibireMasuNeNotification message: どうやらバインダーが投げられたようだ ${error}`
-      );
       throw error;
     }
 
@@ -88,6 +94,7 @@ export const useHomareHandler = () => {
     const webhookUrl: string = (context.env as { DISCORD_WEBHOOK_URL: string }).DISCORD_WEBHOOK_URL;
     return await sendDiscordNotification(webhookUrl, discordNotification)
       .then(() => {
+        storeYouTubeFeed(youTubeFeed);
         return context.json({ status: 'success', message: 'Discord通知送信成功' });
       })
       .catch((error: unknown) => {
@@ -96,6 +103,11 @@ export const useHomareHandler = () => {
             `method: sendDiscordNotification status: ${error.status}, message: ${error.message}, description: ${error.description}`
           );
           return context.json({ status: 'fail..', error: error.message }, 500);
+        }
+        if (error instanceof YouTubeFeedStoreError) {
+          console.error(
+            `method: postShibireMasuNeNotification message: どうやらバインダーが投げられたようだ ${error}`
+          );
         }
         console.error(
           `method: sendDiscordNotification message: 類例をみないエラーが発生しました ${error}`
