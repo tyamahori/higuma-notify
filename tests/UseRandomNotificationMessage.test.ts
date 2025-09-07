@@ -55,14 +55,13 @@ describe('Test UseRandomNotificationMessage', () => {
         { length: 257 },
         (_, i) => `notification message ${i}`
       );
+
       const { generateRandomNotificationMessage: generateRandomNotificationMessageInBoundary } =
         useRandomNotificationMessage(notificationMessagesInBoundary, () => 0);
-
-      expect(generateRandomNotificationMessageInBoundary()).toBe('notification message 0');
-
       const { generateRandomNotificationMessage: generateRandomNotificationMessageOutOfBoundary } =
         useRandomNotificationMessage(notificationMessagesOutOfBoundary, () => 0);
 
+      expect(generateRandomNotificationMessageInBoundary()).toBe('notification message 0');
       expect(() => generateRandomNotificationMessageOutOfBoundary()).toThrow(
         '通知メッセージの数が大杉'
       );
