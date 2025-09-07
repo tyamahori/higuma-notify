@@ -177,27 +177,30 @@ describe('Unit Tests', () => {
 
   describe('Signature Validation Tests', () => {
     it('should throw InvalidSignatureError when X-Hub-Signature header is missing', () => {
-      const headers = {
-        /* no X-Hub-Signature header */
-      };
-      const reqBody = 'test';
-      const hubSecret = 'test';
-      expect(() => validateSignature(headers, reqBody, hubSecret)).toThrow(InvalidSignatureError);
+      expect(() =>
+        validateSignature({ xHubSignature: undefined, reqBody: 'test', hubSecret: 'test' })
+      ).toThrow(InvalidSignatureError);
+    });
+
+    it('should throw InvalidSignatureError when X-Hub-Signature header is empty', () => {
+      expect(() =>
+        validateSignature({ xHubSignature: '', reqBody: 'test', hubSecret: 'test' })
+      ).toThrow(InvalidSignatureError);
     });
 
     it('should throw InvalidSignatureError when the signature does not match', () => {
-      const headers = { 'X-Hub-Signature': 'sha1=invalid' };
-      const reqBody = 'test';
-      const hubSecret = 'test';
-      expect(() => validateSignature(headers, reqBody, hubSecret)).toThrow(InvalidSignatureError);
+      expect(() =>
+        validateSignature({ xHubSignature: 'sha1=invalid', reqBody: 'test', hubSecret: 'test' })
+      ).toThrow(InvalidSignatureError);
     });
 
     it('should not throw an error when the signature matches', () => {
       const hubSecret = 'secret';
       const reqBody = 'foobar';
       const hmac = createHmac('sha1', hubSecret).update(reqBody).digest('hex');
-      const headers = { 'X-Hub-Signature': `sha1=${hmac}` };
-      expect(() => validateSignature(headers, reqBody, hubSecret)).not.toThrow();
+      expect(() =>
+        validateSignature({ xHubSignature: `sha1=${hmac}`, reqBody, hubSecret })
+      ).not.toThrow();
     });
   });
 });

@@ -34,7 +34,11 @@ app.post('/websub/youtube', async (context: HigumaContext) => {
   const reqBody = await context.req.text();
 
   // X-Hub-Signature を検証
-  validateSignature(context.req.header(), reqBody, context.env.HUB_SECRET);
+  validateSignature({
+    xHubSignature: context.req.header('x-hub-signature'),
+    reqBody,
+    hubSecret: context.env.HUB_SECRET,
+  });
 
   // ランダムな通知メッセージを生成
   const { generateRandomNotificationMessage }: UseRandomNotificationMessage =
