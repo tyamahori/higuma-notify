@@ -67,7 +67,7 @@ YouTube の PubSubHubbub（WebSub）Hub に対し、以下のフォームパラ�
 - hub.mode: `subscribe`
 - hub.topic: `https://www.youtube.com/feeds/videos.xml?channel_id=<YourChannelId>`
 - hub.callback: あなたの公開コールバック URL（例: `https://<your-domain>/websub/youtube`）
-- hub.secret: 任意（署名用）。現状このプロジェクトでは署名検証を行っていません
+- hub.secret: 任意（署名用）。このプロジェクトでは署名検証を行っており、POST `/websub/youtube` へのリクエストを受け取った際、リクエストヘッダーの `X-Hub-Signature` が期待する値であることを確認しています。詳細な仕様は [PubSubHubbub Core 0.4 - 8. Authenticated Content Distribution](https://pubsubhubbub.github.io/PubSubHubbub/pubsubhubbub-core-0.4.html#rfc.section.8) を参照してください
 - hub.lease_seconds: 任意（購読期間）
 
 購読するコマンド例
