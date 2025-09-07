@@ -10,12 +10,12 @@ export class YouTubeFeedStoreError extends KeyValueStoreError {
 
 // TODO: KV STOREを注入する場合は、引数に記載
 export const useYouTubeFeedStore = () => {
-  const { isKeyExists, storeKeyValue }: UseKeyValueStore = useKeyValueStore();
+  const { isKeyAlreadyStored, storeKeyValue }: UseKeyValueStore = useKeyValueStore();
 
-  const isYouTubeFeedAlreadyStored = (youTubeFeed: YouTubeFeed): boolean => {
+  const isYouTubeFeedAlreadyStored = async (youTubeFeed: YouTubeFeed): Promise<boolean> => {
     try {
       const key: string = youTubeFeed.feed.entry.id;
-      return isKeyExists(key);
+      return isKeyAlreadyStored(key);
     } catch (error: unknown) {
       if (error instanceof KeyValueStoreError) {
         throw new YouTubeFeedStoreError('バインダーに資料なし', { cause: error });
@@ -27,7 +27,7 @@ export const useYouTubeFeedStore = () => {
     }
   };
 
-  const storeYouTubeFeed = (youTubeFeed: YouTubeFeed): void => {
+  const storeYouTubeFeed = async (youTubeFeed: YouTubeFeed): Promise<void> => {
     try {
       const key: string = youTubeFeed.feed.entry.id;
       const value: string = youTubeFeed.feed.entry.title;

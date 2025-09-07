@@ -65,7 +65,7 @@ export const useHomareHandler = () => {
 
     // check YouTube feed is already stored
     try {
-      if (isYouTubeFeedAlreadyStored(youTubeFeed)) {
+      if (await isYouTubeFeedAlreadyStored(youTubeFeed)) {
         console.error(
           `method: postShibireMasuNeNotification message: 資料はバインダーにすでに挟まっていたようだ`
         );
@@ -93,8 +93,8 @@ export const useHomareHandler = () => {
     // send discord notification
     const webhookUrl: string = (context.env as { DISCORD_WEBHOOK_URL: string }).DISCORD_WEBHOOK_URL;
     return await sendDiscordNotification(webhookUrl, discordNotification)
-      .then(() => {
-        storeYouTubeFeed(youTubeFeed);
+      .then(async () => {
+        await storeYouTubeFeed(youTubeFeed);
         return context.json({ status: 'success', message: 'Discord通知送信成功' });
       })
       .catch((error: unknown) => {

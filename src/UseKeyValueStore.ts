@@ -7,22 +7,20 @@ export class KeyValueStoreError extends Error {
 
 // TODO: KV STOREを注入する場合は、引数に記載
 export const useKeyValueStore = () => {
-  // TODO: 機能実装時に、async に変更?
-  const isKeyExists = (key: string): boolean => {
+  const isKeyAlreadyStored = async (key: string): Promise<boolean> => {
     // TODO: key が登録済みかチェック処理を記載
     // TODO: try / catch で KV STORE に関するエラー処理も記載
     console.log(`key: ${key}`);
     return true;
   };
 
-  // TODO: 機能実装時に、async に変更?
-  const storeKeyValue = (key: string, value: string): void => {
+  const storeKeyValue = async (key: string, value: string): Promise<void> => {
     // TODO: key / value の登録処理を記載
     // TODO: try / catch で KV STORE に関するエラー処理も記載
     console.log(`[key, value]: [${key}, ${value}]`);
   };
 
-  return { isKeyExists, storeKeyValue };
+  return { isKeyAlreadyStored, storeKeyValue };
 };
 
 export type UseKeyValueStore = ReturnType<typeof useKeyValueStore>;
