@@ -1,5 +1,6 @@
 import { Hono, Context } from 'hono';
 import { inspect } from 'node:util';
+import { RANDOM_NUMBER } from './constants/RandomNumber';
 import { Bindings } from './types/Bindings';
 import { useHomareHandler, UseHomareHandler } from './UseHomareHandler';
 import {
@@ -27,7 +28,9 @@ app.get('/websub/youtube', (context: Context) => {
 app.post('/websub/youtube', async (context: Context) => {
   // ランダムな通知メッセージを生成
   const { generateRandomNotificationMessage }: UseRandomNotificationMessage =
-    useRandomNotificationMessage(notificationMessages.list, () => Math.floor(Math.random() * 256));
+    useRandomNotificationMessage(notificationMessages.list, () =>
+      Math.floor(Math.random() * RANDOM_NUMBER.MAX_VALUE)
+    );
   const notificationMessage: string = generateRandomNotificationMessage();
   /**
    * 痺れますね！

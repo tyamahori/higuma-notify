@@ -1,12 +1,16 @@
+import { NOTIFICATION_MESSAGES } from './constants/NotificationMessages';
+
 export const useRandomNotificationMessage = (
   notificationMessages: string[],
   generateRandomInt: () => number // Random integer N is generated
 ) => {
-  const generateRandomNotificationMessage = (): string => {
+  const generateRandomNotificationMessage = (
+    maxLength: number = NOTIFICATION_MESSAGES.MAX_LENGTH
+  ): string => {
     if (notificationMessages.length === 0) {
       throw new Error('通知メッセージなし');
     }
-    if (!(notificationMessages.length < 1024)) {
+    if (!(notificationMessages.length < maxLength)) {
       throw new Error('通知メッセージの数が大杉');
     }
     const randomInt: number = generateRandomInt();
