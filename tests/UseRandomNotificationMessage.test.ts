@@ -4,7 +4,7 @@ import {
   UseRandomNotificationMessage,
 } from '../src/UseRandomNotificationMessage';
 
-describe('Test UseRandomNOtificationMessage', () => {
+describe('Test UseRandomNotificationMessage', () => {
   describe('Random Notification Message Generate Test', () => {
     // リストの項目を順番に出力するためのメソッドを内包 (副作用込み)
     const useSequence = () => {
