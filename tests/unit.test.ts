@@ -1,6 +1,8 @@
 import { describe, it, expect } from 'vitest';
+import { createHmac } from 'node:crypto';
 import { XMLParser } from 'fast-xml-parser';
 import { youTubeFeedValidationSchema } from '../src/validation/YouTubeFeedValidationSchema';
+import { InvalidSignatureError, validateSignature } from '../src/validation/SignatureValidation';
 import { useYouTubeFeed } from '../src/UseYouTubeFeed';
 import { sampleXmlString } from './fixtures/sample_xml';
 
@@ -170,6 +172,35 @@ describe('Unit Tests', () => {
       expect(() => {
         youTubeFeedValidationSchema.parse(bodyExample);
       }).toThrow();
+    });
+  });
+
+  describe('Signature Validation Tests', () => {
+    it('should throw InvalidSignatureError when X-Hub-Signature header is missing', () => {
+      expect(() =>
+        validateSignature({ xHubSignature: undefined, reqBody: 'test', hubSecret: 'test' })
+      ).toThrow(InvalidSignatureError);
+    });
+
+    it('should throw InvalidSignatureError when X-Hub-Signature header is empty', () => {
+      expect(() =>
+        validateSignature({ xHubSignature: '', reqBody: 'test', hubSecret: 'test' })
+      ).toThrow(InvalidSignatureError);
+    });
+
+    it('should throw InvalidSignatureError when the signature does not match', () => {
+      expect(() =>
+        validateSignature({ xHubSignature: 'sha1=invalid', reqBody: 'test', hubSecret: 'test' })
+      ).toThrow(InvalidSignatureError);
+    });
+
+    it('should not throw an error when the signature matches', () => {
+      const hubSecret = 'secret';
+      const reqBody = 'foobar';
+      const hmac = createHmac('sha1', hubSecret).update(reqBody).digest('hex');
+      expect(() =>
+        validateSignature({ xHubSignature: `sha1=${hmac}`, reqBody, hubSecret })
+      ).not.toThrow();
     });
   });
 });
