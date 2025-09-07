@@ -11,7 +11,7 @@ export const useKeyValueStore = () => {
     // TODO: key が登録済みかチェック処理を記載
     // TODO: try / catch で KV STORE に関するエラー処理も記載
     console.log(`key: ${key}`);
-    return true;
+    return false;
   };
 
   const storeKeyValue = async (key: string, value: string): Promise<void> => {
