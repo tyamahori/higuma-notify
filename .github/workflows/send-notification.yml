@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       payload:
-        description: "Payload to send to HUB_CALLBACK. When omitted, a default payload will be used."
+        description: 'Payload to send to HUB_CALLBACK. When omitted, a default payload will be used.'
         required: false
         default: |
           <feed xmlns:yt="http://www.youtube.com/xml/schemas/2015"
@@ -45,7 +45,7 @@ jobs:
         uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
-          
+
       - name: Run the send notification script
         run: bun run tools/send-notification.ts
         env:
