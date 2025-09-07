@@ -1,17 +1,21 @@
 export const useRandomNotificationMessage = (
   notificationMessages: string[],
-  generateNormalizedRandom: () => number // Random decimal number generator: 0.0 <= D < 1.0
+  generateRandomInt: () => number // Random integer N is generated
 ) => {
   const generateRandomNotificationMessage = (): string => {
     if (notificationMessages.length === 0) {
       throw new Error('通知メッセージなし');
     }
-    const normalizedRandom: number = generateNormalizedRandom();
-    if (!(0.0 <= normalizedRandom && normalizedRandom < 1.0)) {
-      throw new Error('生成した正規化乱数が範囲外');
+    if (!(notificationMessages.length < 1024)) {
+      throw new Error('通知メッセージの数が大杉');
     }
-    const nth: number = Math.floor(notificationMessages.length * normalizedRandom);
-    return notificationMessages[nth];
+    const randomInt: number = generateRandomInt();
+    if (!Number.isInteger(randomInt)) {
+      throw new Error('生成した乱数が非整数');
+    }
+
+    const listLength = notificationMessages.length;
+    return notificationMessages[randomInt % listLength];
   };
 
   return { generateRandomNotificationMessage };
