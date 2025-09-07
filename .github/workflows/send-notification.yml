@@ -29,9 +29,6 @@ on:
           </feed>
         type: string
 
-permissions:
-  contents: read
-
 jobs:
   subscribe:
     runs-on: ubuntu-latest
