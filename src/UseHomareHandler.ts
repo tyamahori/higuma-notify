@@ -1,4 +1,3 @@
-import { Context } from 'hono';
 import { DiscordNotification } from './types/DiscordNotification';
 import {
   useDiscordNotification,
