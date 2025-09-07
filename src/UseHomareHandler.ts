@@ -7,6 +7,7 @@ import {
 } from './UseDiscordNotification';
 import { YouTubeFeed } from './types/YouTubeFeed';
 import { useYouTubeFeed, YouTubeFeedParseError, UseYouTubeFeed } from './UseYouTubeFeed';
+import type { HigumaContext } from './types/Context';
 
 export const useHomareHandler = () => {
   // Result type for parsing YouTube feed
@@ -34,7 +35,7 @@ export const useHomareHandler = () => {
   /**
    * 闘う顔してますか？
    */
-  const battleFaceOk = (context: Context) => {
+  const battleFaceOk = (context: HigumaContext) => {
     const query: string = context.req.query('hub.challenge') ?? 'empty';
     console.log(query);
 

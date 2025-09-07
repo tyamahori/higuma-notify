@@ -1,6 +1,7 @@
-import { Hono, Context } from 'hono';
+import { Hono } from 'hono';
 import { inspect } from 'node:util';
-import { Bindings } from './types/Bindings';
+import type { Bindings } from './types/Bindings';
+import type { HigumaContext } from './types/Context';
 import { useHomareHandler, UseHomareHandler } from './UseHomareHandler';
 import {
   useRandomNotificationMessage,
@@ -17,7 +18,7 @@ const { battleFaceOk, postShibireMasuNeNotification }: UseHomareHandler = useHom
 const app = new Hono<{ Bindings: Bindings }>();
 
 // 1) 確認リクエスト (GET)
-app.get('/websub/youtube', (context: Context) => {
+app.get('/websub/youtube', (context: HigumaContext) => {
   /**
    * 闘う顔してますか？
    */
@@ -25,7 +26,7 @@ app.get('/websub/youtube', (context: Context) => {
 });
 
 // 2) 投稿リクエスト (POST) with rate limiting
-app.post('/websub/youtube', async (context: Context) => {
+app.post('/websub/youtube', async (context: HigumaContext) => {
   // RateLimit のバリデーションチェック
   await validateRateLimit(context);
 
@@ -40,7 +41,7 @@ app.post('/websub/youtube', async (context: Context) => {
 });
 
 // 999) catch all exceptional errors
-app.onError((error: Error, context: Context) => {
+app.onError((error: Error, context: HigumaContext) => {
   console.error(`${inspect(error)}`);
   return context.json({ message: '類例をみないエラー', error: error.message }, 500);
 });
