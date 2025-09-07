@@ -18,7 +18,7 @@ const hmac = createHmac('sha1', HUB_SECRET).update(PAYLOAD).digest('hex');
 const res = await fetch(HUB_CALLBACK, {
   method: 'POST',
   headers: {
-    'Content-Type': 'text/xml; charset=UTF-8',
+    'Content-Type': 'application/atom+xml',
     'X-Hub-Signature': `sha1=${hmac}`,
   },
   body: PAYLOAD,
