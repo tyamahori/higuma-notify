@@ -1,4 +1,4 @@
-import { useKeyValueStore, KeyValueStoreError, UseKeyValueStore } from './UseKeyValueStore';
+import { useKeyValueStore, UseKeyValueStore, KeyValueStoreError } from './UseKeyValueStore';
 import { YouTubeFeed } from './types/YouTubeFeed';
 
 // TODO: 不要？

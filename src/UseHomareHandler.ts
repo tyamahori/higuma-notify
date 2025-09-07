@@ -2,11 +2,11 @@ import { Context } from 'hono';
 import { DiscordNotification } from './types/DiscordNotification';
 import {
   useDiscordNotification,
-  DiscordNotificationSendError,
   UseDiscordNotification,
+  DiscordNotificationSendError,
 } from './UseDiscordNotification';
 import { YouTubeFeed } from './types/YouTubeFeed';
-import { useYouTubeFeed, YouTubeFeedParseError, UseYouTubeFeed } from './UseYouTubeFeed';
+import { useYouTubeFeed, UseYouTubeFeed, YouTubeFeedParseError } from './UseYouTubeFeed';
 import {
   useYouTubeFeedKeyValueStore,
   UseYouTubeFeedKeyValueStore,
@@ -24,7 +24,7 @@ export const useHomareHandler = () => {
     const { parseYouTubeFeed }: UseYouTubeFeed = useYouTubeFeed();
     try {
       return { success: true, data: parseYouTubeFeed(contextBody) };
-    } catch (error) {
+    } catch (error: unknown) {
       if (error instanceof YouTubeFeedParseError) {
         return { success: false, error };
       }
