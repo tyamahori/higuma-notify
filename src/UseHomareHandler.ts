@@ -8,10 +8,10 @@ import {
 import { YouTubeFeed } from './types/YouTubeFeed';
 import { useYouTubeFeed, UseYouTubeFeed, YouTubeFeedParseError } from './UseYouTubeFeed';
 import {
-  useYouTubeFeedKeyValueStore,
-  UseYouTubeFeedKeyValueStore,
-  YouTubeFeedKeyValueStoreError,
-} from './UseYouTubeFeedKeyValueStore';
+  useYouTubeFeedStore,
+  UseYouTubeFeedStore,
+  YouTubeFeedStoreError,
+} from './UseYouTubeFeedStore';
 
 export const useHomareHandler = () => {
   // Result type for parsing YouTube feed
@@ -51,8 +51,8 @@ export const useHomareHandler = () => {
   const postShibireMasuNeNotification = async (context: Context, notificationMessage: string) => {
     const { createDiscordNotification, sendDiscordNotification }: UseDiscordNotification =
       useDiscordNotification();
-    const { isYouTubeFeedAlreadyStored, storeYouTubeFeed }: UseYouTubeFeedKeyValueStore =
-      useYouTubeFeedKeyValueStore();
+    const { isYouTubeFeedAlreadyStored, storeYouTubeFeed }: UseYouTubeFeedStore =
+      useYouTubeFeedStore();
 
     // parse YouTube feed from context using Result pattern
     const contextBody: string = await context.req.text();
@@ -69,7 +69,7 @@ export const useHomareHandler = () => {
         storeYouTubeFeed(youTubeFeed);
       }
     } catch (error: unknown) {
-      if (error instanceof YouTubeFeedKeyValueStoreError) {
+      if (error instanceof YouTubeFeedStoreError) {
         return context.json({ status: 'fail..', error: error.message }, 500);
       }
       console.error(

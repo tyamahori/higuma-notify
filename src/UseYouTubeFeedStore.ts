@@ -2,14 +2,14 @@ import { useKeyValueStore, UseKeyValueStore, KeyValueStoreError } from './UseKey
 import { YouTubeFeed } from './types/YouTubeFeed';
 
 // TODO: 不要？
-export class YouTubeFeedKeyValueStoreError extends KeyValueStoreError {
+export class YouTubeFeedStoreError extends KeyValueStoreError {
   static {
     this.prototype.name = 'YouTubeFeedNotifyCheckError';
   }
 }
 
 // TODO: KV STOREを注入する場合は、引数に記載
-export const useYouTubeFeedKeyValueStore = () => {
+export const useYouTubeFeedStore = () => {
   const { isKeyExists, storeKeyValue }: UseKeyValueStore = useKeyValueStore();
 
   const isYouTubeFeedAlreadyStored = (youTubeFeed: YouTubeFeed): boolean => {
@@ -18,7 +18,7 @@ export const useYouTubeFeedKeyValueStore = () => {
       return isKeyExists(key);
     } catch (error: unknown) {
       if (error instanceof KeyValueStoreError) {
-        throw new YouTubeFeedKeyValueStoreError('バインダーに資料なし', { cause: error });
+        throw new YouTubeFeedStoreError('バインダーに資料なし', { cause: error });
       }
       console.error(
         `method: isYouTubeFeedAlreadyStored message: バインダーが投げられたため、資料が存在しない ${error}`
@@ -34,7 +34,7 @@ export const useYouTubeFeedKeyValueStore = () => {
       return storeKeyValue(key, value);
     } catch (error: unknown) {
       if (error instanceof KeyValueStoreError) {
-        throw new YouTubeFeedKeyValueStoreError('バインダーに資料をうまく挟めない', {
+        throw new YouTubeFeedStoreError('バインダーに資料をうまく挟めない', {
           cause: error,
         });
       }
@@ -48,4 +48,4 @@ export const useYouTubeFeedKeyValueStore = () => {
   return { isYouTubeFeedAlreadyStored, storeYouTubeFeed };
 };
 
-export type UseYouTubeFeedKeyValueStore = ReturnType<typeof useYouTubeFeedKeyValueStore>;
+export type UseYouTubeFeedStore = ReturnType<typeof useYouTubeFeedStore>;
