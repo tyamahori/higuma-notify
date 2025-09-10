@@ -6,6 +6,7 @@ import {
 } from './UseDiscordNotification';
 import { YouTubeFeed } from './types/YouTubeFeed';
 import { useYouTubeFeed, UseYouTubeFeed, YouTubeFeedParseError } from './UseYouTubeFeed';
+import { useKeyValueStore } from './UseKeyValueStore';
 import {
   useYouTubeFeedStore,
   UseYouTubeFeedStore,
@@ -60,7 +61,7 @@ export const useHomareHandler = () => {
     const { createDiscordNotification, sendDiscordNotification }: UseDiscordNotification =
       useDiscordNotification();
     const { isYouTubeFeedAlreadyStored, storeYouTubeFeed }: UseYouTubeFeedStore =
-      useYouTubeFeedStore();
+      useYouTubeFeedStore(useKeyValueStore(context.env.HIGUMA_NOTIFY_KV));
 
     // parse YouTube feed from context using Result pattern
     const youTubeFeedParseResult: YouTubeFeedParseResult = tryParseYouTubeFeed(reqBody);
