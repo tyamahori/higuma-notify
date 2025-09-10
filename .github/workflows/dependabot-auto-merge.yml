@@ -1,20 +1,43 @@
-name: Dependabot Auto Merge
+name: Dependabot Auto-merge
 
-on:
-  pull_request:
-    types: [opened, synchronize]
+on: pull_request
 
 permissions:
   contents: write
   pull-requests: write
 
 jobs:
-  auto-merge:
+  dependabot:
     runs-on: ubuntu-latest
     if: github.actor == 'dependabot[bot]'
+
     steps:
+      # Dependabotのメタデータを取得
+      - name: Fetch metadata
+        id: metadata
+        uses: dependabot/fetch-metadata@v2
+        with:
+          github-token: '${{ secrets.GITHUB_TOKEN }}'
+
+      # パッチ・マイナーアップデートの自動マージを有効化
+      # 注意: これはPR単位で自動マージを有効にするだけで、
+      # 実際のマージはCIとレビュー要件が満たされた時のみ実行される
       - name: Enable auto-merge for Dependabot PRs
+        if: |
+          steps.metadata.outputs.update-type == 'version-update:semver-patch' ||
+          steps.metadata.outputs.update-type == 'version-update:semver-minor'
         run: gh pr merge --auto --squash "$PR_URL"
         env:
           PR_URL: ${{ github.event.pull_request.html_url }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # Dependabot PRを自動承認（オプション）
+      # ブランチ保護でレビューが必須の場合に追加
+      - name: Auto-approve Dependabot PRs
+        if: |
+          steps.metadata.outputs.update-type == 'version-update:semver-patch' ||
+          steps.metadata.outputs.update-type == 'version-update:semver-minor'
+        run: gh pr review --approve "$PR_URL"
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
