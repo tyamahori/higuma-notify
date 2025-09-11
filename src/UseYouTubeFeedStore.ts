@@ -1,16 +1,14 @@
-import { useKeyValueStore, UseKeyValueStore, KeyValueStoreError } from './UseKeyValueStore';
+import { UseKeyValueStore, KeyValueStoreError } from './UseKeyValueStore';
 import { YouTubeFeed } from './types/YouTubeFeed';
 
-// TODO: 不要？
 export class YouTubeFeedStoreError extends KeyValueStoreError {
   static {
     this.prototype.name = 'YouTubeFeedNotifyCheckError';
   }
 }
 
-// TODO: KV STOREを注入する場合は、引数に記載
-export const useYouTubeFeedStore = () => {
-  const { isKeyAlreadyStored, storeKeyValue }: UseKeyValueStore = useKeyValueStore();
+export const useYouTubeFeedStore = (useKeyValueStoreMethods: UseKeyValueStore) => {
+  const { isKeyAlreadyStored, storeKeyValue }: UseKeyValueStore = useKeyValueStoreMethods;
 
   const isYouTubeFeedAlreadyStored = async (youTubeFeed: YouTubeFeed): Promise<boolean> => {
     try {
