@@ -7,7 +7,7 @@ export class KeyValueStoreError extends Error {
 export const useKeyValueStore = (kv: KVNamespace) => {
   const isKeyAlreadyStored = async (key: string): Promise<boolean> => {
     try {
-      return (await kv.get(key)) ? true : false;
+      return (await kv.get(key)) !== null;
     } catch (error: unknown) {
       throw new KeyValueStoreError('Key Value Store: Key Registeration Check Error', {
         cause: error,
