@@ -18,7 +18,7 @@
   "dependencies": {
     "fast-xml-parser": "^5.2.5",
     "hono": "^4.9.6",
-    "zod": "^4.1.5"
+    "zod": "^4.1.8"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20250913.0",
