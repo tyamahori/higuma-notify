@@ -17,7 +17,7 @@
   },
   "dependencies": {
     "fast-xml-parser": "^5.3.0",
-    "hono": "^4.9.10",
+    "hono": "^4.9.12",
     "zod": "^4.1.12"
   },
   "devDependencies": {
