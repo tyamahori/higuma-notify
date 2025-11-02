@@ -20,13 +20,23 @@ jobs:
     timeout-minutes: 5
 
     steps:
-      - name: Subscribe with curl (GET)
+      - name: ぼくひぐま。〜おとなの学びや〜 の購読 with curl (GET)
         shell: bash
         run: |
           set -euo pipefail          
           curl -X POST https://pubsubhubbub.appspot.com/subscribe \
           -d "hub.mode=subscribe" \
           -d "hub.topic=https://www.youtube.com/xml/feeds/videos.xml?channel_id=UC_aBYQ3phPsrkSXkpnZeDZw" \
+          -d "hub.callback=${{ secrets.HUB_CALLBACK }}" \
+          -d "hub.secret=${{ secrets.HUB_SECRET }}" \
+          -d "hub.lease_seconds=800000"
+      - name: ぼくひぐま。〜おとなの放課後〜 の購読 with curl (GET)
+        shell: bash
+        run: |
+          set -euo pipefail          
+          curl -X POST https://pubsubhubbub.appspot.com/subscribe \
+          -d "hub.mode=subscribe" \
+          -d "hub.topic=https://www.youtube.com/xml/feeds/videos.xml?channel_id=UCKcO357uJF2j8vKgQxBQuNA" \
           -d "hub.callback=${{ secrets.HUB_CALLBACK }}" \
           -d "hub.secret=${{ secrets.HUB_SECRET }}" \
           -d "hub.lease_seconds=800000"
