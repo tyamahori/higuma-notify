@@ -5,7 +5,7 @@
       "name": "higuma",
       "dependencies": {
         "fast-xml-parser": "^5.3.1",
-        "hono": "^4.10.3",
+        "hono": "^4.10.4",
         "zod": "^4.1.12",
       },
       "devDependencies": {
@@ -397,7 +397,7 @@
 
     "has-flag": ["has-flag@4.0.0", "", {}, "sha512-EykJT/Q1KjTWctppgIAgfSO0tKVuZUjhgMr17kqTumMl6Afv3EISleU7qZUzoXDFTAHTDC4NOoG/ZxU3EvlMPQ=="],
 
-    "hono": ["hono@4.10.3", "", {}, "sha512-2LOYWUbnhdxdL8MNbNg9XZig6k+cZXm5IjHn2Aviv7honhBMOHb+jxrKIeJRZJRmn+htUCKhaicxwXuUDlchRA=="],
+    "hono": ["hono@4.10.4", "", {}, "sha512-YG/fo7zlU3KwrBL5vDpWKisLYiM+nVstBQqfr7gCPbSYURnNEP9BDxEMz8KfsDR9JX0lJWDRNc6nXX31v7ZEyg=="],
 
     "ignore": ["ignore@7.0.5", "", {}, "sha512-Hs59xBNfUIunMFgWAbGX5cq6893IbWg4KnrjbYwX3tx0ztorVgTDA6B2sxf8ejHJ4wz8BqGUMYlnzNBer5NvGg=="],
 
