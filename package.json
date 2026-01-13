@@ -31,7 +31,7 @@
     "eslint-plugin-prettier": "^5.5.4",
     "jiti": "^2.6.1",
     "prettier": "^3.7.4",
-    "vitest": "^4.0.16",
+    "vitest": "^4.0.17",
     "wrangler": "^4.56.0"
   }
 }
