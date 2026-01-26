@@ -30,7 +30,7 @@
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.5",
     "jiti": "^2.6.1",
-    "prettier": "^3.8.0",
+    "prettier": "^3.8.1",
     "vitest": "^4.0.17",
     "wrangler": "^4.60.0"
   }
