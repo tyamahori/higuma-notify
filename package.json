@@ -32,6 +32,6 @@
     "jiti": "^2.7.0",
     "prettier": "^3.8.3",
     "vitest": "^4.1.6",
-    "wrangler": "^4.92.0"
+    "wrangler": "^4.94.0"
   }
 }
