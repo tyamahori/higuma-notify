@@ -16,7 +16,7 @@
     "test:ui": "vitest --ui"
   },
   "dependencies": {
-    "fast-xml-parser": "^5.8.0",
+    "fast-xml-parser": "^5.9.0",
     "hono": "^4.12.24",
     "zod": "^4.4.3"
   },
