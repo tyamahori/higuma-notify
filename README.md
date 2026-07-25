@@ -1,82 +1,120 @@
 # Higuma Notify
 
-YouTube の新着動画通知を WebSub で受け取り、Discord Webhook に転送する Cloudflare Workers（Hono + TypeScript）プロジェクトです。
+YouTube の新着動画通知を WebSub で受け取り、Discord Webhook に転送する Cloudflare Worker です。
+Hono と TypeScript で実装し、Bun で開発します。
+
+## 動作
+
+`/websub/youtube` で、WebSub の購読確認と YouTube からの通知を処理します。
+
+- `GET /websub/youtube`: `hub.challenge` の値をそのまま返します。
+- `POST /websub/youtube`: 送信元 IP ごとにレート制限を適用し、`X-Hub-Signature` の HMAC-SHA1 署名を検証します。Atom フィードの形式が正しければ、動画タイトルと URL をランダムなメッセージとともに Discord へ送信します。
+
+POST リクエストは、10 秒あたり 1 件に制限しています。
+署名不正と Atom フィードの検証エラーには `400`、Discord への送信失敗と予期しないエラーには `500` を返します。
 
 ## 技術スタック
 
-- Hono (v4.9系)
-- Bun (v1.2系)
-- Zod (v4.1系)
+- Cloudflare Workers、Wrangler
+- Hono
 - TypeScript
-- Cloudflare Workers
+- fast-xml-parser
+- Zod
+- Vitest
+- Bun
 
-## 機能概要
-
-- WebSub 購読確認エンドポイント（GET）
-- YouTube からの通知受信（POST, Atom/XML 解析）
-- Discord へのメッセージ送信（Webhook）
-
-## 必要ツール
-
-- Bun（パッケージマネージャ）
-- Cloudflare アカウント
-- Wrangler（Cloudflare Workers の CLI）
-- Discord Webhook URL
+依存パッケージの正確なバージョンは、`package.json` と `bun.lock` を参照してください。
 
 ## セットアップ
 
-1. 依存関係のインストール
-   - `bun install`
+必要なものは、Bun、Cloudflare アカウント、Discord Webhook URL です。
+Wrangler は開発依存としてインストールされます。
 
-2. 環境変数の設定
-   - ローカル開発用:
-     - プロジェクトルートに`.dev.vars.sample` から `.dev.vars` を作成します
-     - `cp .dev.vars.sample .dev.vars`
-     - `.dev.vars` に `DISCORD_WEBHOOK_URL=<あなたの Discord Webhook URL>` を設定してください
-   - 本番/デプロイ用:
-     - Cloudflare にシークレット変数として登録
-       - `wrangler secret put DISCORD_WEBHOOK_URL`
-       - プロンプトに従い値を入力
-
-## ローカル開発
-
-- 開発サーバ起動: `bun run dev`
-- 主要エンドポイント:
-  - GET `/websub/youtube`（購読確認。hub.challenge をそのまま返します）
-  - POST `/websub/youtube`（YouTube からの通知受信。Discord に送信します）
-
-## テスト
-
-テストを実行するには：
-
-```txt
-# すべてのテストを実行
-bun test
-
-# テストを監視モードで実行
-bun test --watch
-
-# テストUIを起動
-bun test --ui
+```bash
+bun install
+cp .dev.vars.sample .dev.vars
 ```
+
+`.dev.vars` に次の値を設定します。
+
+```dotenv
+DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/...
+HUB_SECRET=WebSubの購読申請に使う共有シークレット
+```
+
+開発サーバーを起動します。
+
+```bash
+bun run dev
+```
+
+Wrangler の既定では、ローカルサーバーは `http://localhost:8787` で待ち受けます。
+
+## テストと静的検査
+
+```bash
+# テストを監視モードで実行
+bun run test
+
+# テストを一度だけ実行
+bun run test:run
+
+# Vitest UI を起動
+bun run test:ui
+
+# ESLint、Prettier、TypeScript の検査
+bun run lint
+bun run format:check
+bun run typecheck
+```
+
+CI では、lint、フォーマット、型、テストを検査します。
 
 ## YouTube WebSub の購読
 
-YouTube の PubSubHubbub（WebSub）Hub に対し、以下のフォームパラメータで購読を申請します。
-
-- hub.mode: `subscribe`
-- hub.topic: `https://www.youtube.com/feeds/videos.xml?channel_id=<YourChannelId>`
-- hub.callback: あなたの公開コールバック URL（例: `https://<your-domain>/websub/youtube`）
-- hub.secret: 任意（署名用）。このプロジェクトでは署名検証を行っており、POST `/websub/youtube` へのリクエストを受け取った際、リクエストヘッダーの `X-Hub-Signature` が期待する値であることを確認しています。詳細な仕様は [PubSubHubbub Core 0.4 - 8. Authenticated Content Distribution](https://pubsubhubbub.github.io/PubSubHubbub/pubsubhubbub-core-0.4.html#rfc.section.8) を参照してください
-- hub.lease_seconds: 任意（購読期間）
-
-購読するコマンド例
+YouTube の WebSub Hub に購読を申請します。
+`hub.secret` には、Worker の `HUB_SECRET` と同じ値を指定してください。
 
 ```bash
-curl -X POST "https://pubsubhubbub.appspot.com/subscribe" \
+curl -X POST https://pubsubhubbub.appspot.com/subscribe \
   -d "hub.mode=subscribe" \
-  -d "hub.topic='feed-url-here'" \
-  -d "hub.callback='callback-url-here'" \
-  -d "hub.secret='secret-here'" \
+  -d "hub.topic=https://www.youtube.com/xml/feeds/videos.xml?channel_id=<CHANNEL_ID>" \
+  -d "hub.callback=https://<YOUR_DOMAIN>/websub/youtube" \
+  -d "hub.secret=<HUB_SECRET>" \
   -d "hub.lease_seconds=800000"
 ```
+
+このリポジトリの GitHub Actions は、登録済みの YouTube チャンネルを毎日再購読します。
+ワークフローの実行には、リポジトリシークレット `HUB_CALLBACK` と `HUB_SECRET` が必要です。
+
+## 通知を手動で試す
+
+`tools/send-notification.ts` は、Atom ペイロードに署名して Worker へ POST します。
+
+```bash
+PAYLOAD='<feed xmlns:yt="http://www.youtube.com/xml/schemas/2015" xmlns="http://www.w3.org/2005/Atom"><link rel="hub" href="https://pubsubhubbub.appspot.com"/><title>YouTube video feed</title><entry><id>yt:video:VIDEO_ID</id><yt:videoId>VIDEO_ID</yt:videoId><yt:channelId>CHANNEL_ID</yt:channelId><title>Video title</title><link rel="alternate" href="https://www.youtube.com/watch?v=VIDEO_ID"/><author><name>Channel title</name><uri>https://www.youtube.com/channel/CHANNEL_ID</uri></author><published>2015-03-06T21:40:57+00:00</published><updated>2015-03-09T19:05:24+00:00</updated></entry></feed>' \
+HUB_CALLBACK=http://localhost:8787/websub/youtube \
+HUB_SECRET='WebSubの購読申請に使う共有シークレット' \
+bun run tools/send-notification.ts
+```
+
+`PAYLOAD` には Atom XML の文字列を渡します。
+GitHub Actions の `send notification` ワークフローからも、任意のペイロードまたは既定のサンプルを送信できます。
+
+## デプロイ
+
+Worker が使うシークレットを Cloudflare に登録します。
+
+```bash
+bunx wrangler secret put DISCORD_WEBHOOK_URL
+bunx wrangler secret put HUB_SECRET
+```
+
+続いてデプロイします。
+
+```bash
+bun run deploy
+```
+
+`wrangler.jsonc` には、レート制限バインディング `RATE_LIMITER` と KV 名前空間 `HIGUMA_NOTIFY` が定義されています。
+別の Cloudflare アカウントへデプロイする場合は、KV の `id` と `preview_id` をそのアカウントの値に変更してください。

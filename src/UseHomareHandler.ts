@@ -11,8 +11,7 @@ import type { HigumaContext } from './types/Context';
 export const useHomareHandler = () => {
   // Result type for parsing YouTube feed
   type YouTubeFeedParseResult =
-    | { success: true; data: YouTubeFeed }
-    | { success: false; error: YouTubeFeedParseError };
+    { success: true; data: YouTubeFeed } | { success: false; error: YouTubeFeedParseError };
 
   // Safe parsing function that returns Result type
   const tryParseYouTubeFeed = (contextBody: string): YouTubeFeedParseResult => {
