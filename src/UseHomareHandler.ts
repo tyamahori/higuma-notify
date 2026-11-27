@@ -1,11 +1,17 @@
 import { DiscordNotification } from './types/DiscordNotification';
 import {
   useDiscordNotification,
-  DiscordNotificationSendError,
   UseDiscordNotification,
+  DiscordNotificationSendError,
 } from './UseDiscordNotification';
 import { YouTubeFeed } from './types/YouTubeFeed';
-import { useYouTubeFeed, YouTubeFeedParseError, UseYouTubeFeed } from './UseYouTubeFeed';
+import { useYouTubeFeed, UseYouTubeFeed, YouTubeFeedParseError } from './UseYouTubeFeed';
+import { useKeyValueStore } from './UseKeyValueStore';
+import {
+  useYouTubeFeedStore,
+  UseYouTubeFeedStore,
+  YouTubeFeedStoreError,
+} from './UseYouTubeFeedStore';
 import type { HigumaContext } from './types/Context';
 
 export const useHomareHandler = () => {
@@ -17,10 +23,9 @@ export const useHomareHandler = () => {
   // Safe parsing function that returns Result type
   const tryParseYouTubeFeed = (contextBody: string): YouTubeFeedParseResult => {
     const { parseYouTubeFeed }: UseYouTubeFeed = useYouTubeFeed();
-
     try {
       return { success: true, data: parseYouTubeFeed(contextBody) };
-    } catch (error) {
+    } catch (error: unknown) {
       if (error instanceof YouTubeFeedParseError) {
         return { success: false, error };
       }
@@ -55,6 +60,8 @@ export const useHomareHandler = () => {
   ) => {
     const { createDiscordNotification, sendDiscordNotification }: UseDiscordNotification =
       useDiscordNotification();
+    const { isYouTubeFeedAlreadyStored, storeYouTubeFeed }: UseYouTubeFeedStore =
+      useYouTubeFeedStore(useKeyValueStore(context.env.HIGUMA_NOTIFY_KV));
 
     // parse YouTube feed from context using Result pattern
     const youTubeFeedParseResult: YouTubeFeedParseResult = tryParseYouTubeFeed(reqBody);
@@ -63,6 +70,27 @@ export const useHomareHandler = () => {
       return context.json({ status: 'fail..', error: youTubeFeedParseResult.error.message }, 400);
     }
     const youTubeFeed: YouTubeFeed = youTubeFeedParseResult.data;
+
+    // check YouTube feed is already stored
+    try {
+      if (await isYouTubeFeedAlreadyStored(youTubeFeed)) {
+        console.error(
+          `method: postShibireMasuNeNotification message: 資料はバインダーにすでに挟まっていたようだ`
+        );
+        return context.json(
+          { status: 'fail..', error: '資料はバインダーにすでに挟まっていたようだ' },
+          500
+        );
+      }
+    } catch (error: unknown) {
+      if (error instanceof YouTubeFeedStoreError) {
+        console.error(
+          `method: postShibireMasuNeNotification message: どうやらバインダーが投げられたようだ ${error}`
+        );
+        return context.json({ status: 'fail..', error: error.message }, 500);
+      }
+      throw error;
+    }
 
     // create discord notification from YouTube feed
     const discordNotification: DiscordNotification = createDiscordNotification(
@@ -73,7 +101,8 @@ export const useHomareHandler = () => {
     // send discord notification
     const webhookUrl: string = context.env.DISCORD_WEBHOOK_URL;
     return await sendDiscordNotification(webhookUrl, discordNotification)
-      .then(() => {
+      .then(async () => {
+        await storeYouTubeFeed(youTubeFeed);
         return context.json({ status: 'success', message: 'Discord通知送信成功' });
       })
       .catch((error: unknown) => {
@@ -82,6 +111,11 @@ export const useHomareHandler = () => {
             `method: sendDiscordNotification status: ${error.status}, message: ${error.message}, description: ${error.description}`
           );
           return context.json({ status: 'fail..', error: error.message }, 500);
+        }
+        if (error instanceof YouTubeFeedStoreError) {
+          console.error(
+            `method: postShibireMasuNeNotification message: どうやらバインダーが投げられたようだ ${error}`
+          );
         }
         console.error(
           `method: sendDiscordNotification message: 類例をみないエラーが発生しました ${error}`
